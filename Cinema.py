@@ -1,18 +1,25 @@
-#  Criar a estrutura de filmes disponíveis
-#  Criar sessões por filme (com horários e dias, se decidir incluir)
-#  Criar mapa de assentos (ocupados e disponíveis)
-#  Implementar a escolha de assento pelo usuário
-#  Definir valores de ingresso (inteira e meia)
-#  Calcular valor total da compra
-#  Permitir reserva de assentos
-#  Exibir resumo da compra (assento, filme, horário, valor)
-#  Interface de texto (inicial)
-#  (Futuramente) Adicionar interface gráfica
+#  Criar a estrutura de filmes disponíveis [X]
+#  Criar sessões por filme (com horários e dias, se decidir incluir) [X]
+#  Criar mapa de assentos (ocupados e disponíveis) [X]
+#  Implementar a escolha de assento pelo usuário [X]
+#  Definir valores de ingresso (inteira e meia) []
+#  Calcular valor total da compra []
+#  Permitir reserva de assentos [X]
+#  Exibir resumo da compra (assento, filme, horário, valor) []
+#  Login de ADM e login de cliente []
+#  Salvar Filmes e Sessao em arquivos JSON [X]
+#  Carregar arquivos JSON []
+#  Interface de texto (inicial) []
+#  (Futuramente) Adicionar interface gráfica []
+
+#Imports↴
+import os
+import json
 
 class Sessao:
     def __init__(self, filme):
-        self.filme = filme
-        self.horario = 2
+        self.titulo = filme
+        self.id = 2
         self.assentos = {
             'A': ['[O]'] * 5,
             'B': ['[O]'] * 5,
@@ -80,7 +87,7 @@ class Sessao:
 # sessao1.reservar_assento()
 # sessao1.exibir_assentos()
 
-class Filme:
+class Filme: #ADM
     def __init__(self, titulo, duracao, sala, intervalo, dias_disponiveis, horario_inicial="13:00", horario_final="22:00"):
         self.titulo = titulo
         self.duracao = self.converter_horarios(duracao) # EM MINUTOS
@@ -123,6 +130,56 @@ class Filme:
         
 # filme1 = Filme("Putz, a coisa ta feia", "1:30", 1, "15", 5)
 # print(filme1.horarios_disponiveis)
+
+def save_sessao(sessao):
+    os.makedirs('dados', exist_ok=True)
+    
+    arquivo = f'dados/{sessao.titulo}.json'
+    assentos = {
+        linha: [0 if a == '[O]' else 1 for a in sessao.assentos]
+        for linha, colunas in sessao.assentos.items()
+    }
+
+    dados = {
+        "filme": sessao.titulo,
+        "sessao_id": sessao.id,
+        "assentos": assentos
+    }
+    
+    if os.path.exists(arquivo):
+        with open(arquivo, 'r', encoding='utf-8') as f:
+            conteudo = json.load(f)
+    else:
+        conteudo = {'sessoes': {}}
+
+    conteudo['sessoes'][str(sessao.id)] = dados
+
+    with open(arquivo, 'w', encoding='utf-8') as f:
+        json.dump(conteudo, f, indent=4, ensure_ascii=False)
+
+
+def load_sessao(filme, sessao_id):
+    arquivo = f'data/{filme}.json'
+    if not os.path.exists(arquivo):
+        return None
+
+    with open(arquivo, 'r', encoding='utf-8') as f:
+        conteudo = json.load(f)
+
+    if str(sessao_id) not in conteudo['sessoes']:
+        return None
+    
+    dados = conteudo['sessoes'][str(sessao_id)]
+    sessao = Sessao(dados['filme'])
+    sessao.id = dados["sessao_id"]
+
+    sessao.assentos = {
+        linha: ['[O]' if cadeira == 0 else 1 for cadeira in colunas]
+        for linha, colunas in dados["assentos"].items()
+    }
+
+    return sessao
+
 
 def Menu():
     print('*' * 50)
