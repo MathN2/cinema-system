@@ -1,0 +1,20 @@
+[
+    {
+        "titulo": "Harry Potter",
+        "duracao": 90,
+        "sala": 1,
+        "intervalo": 15,
+        "dias_disponiveis": ["Seg", "Qua", "Sex"],
+        "horario_inicial": "13:00",
+        "horario_final": "22:00"
+    },
+    {
+        "titulo": "DALL·E",
+        "duracao": 120,
+        "sala": 2,
+        "intervalo": 15,
+        "dias_disponiveis": ["Ter", "Qui", "Sab"],
+        "horario_inicial": "14:00",
+        "horario_final": "23:00"
+    }
+]
