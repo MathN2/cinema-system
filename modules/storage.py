@@ -12,14 +12,30 @@ def save_movies(filme):
     arquivo = os.path.join(pasta_atual, '../data', 'filmes.json')
     os.makedirs(os.path.dirname(arquivo), exist_ok=True)
 
-    dados = {'titulo': filme.titulo,
+    dados = filme
+
+    with open(arquivo, "w", encoding='utf-8') as f:
+        json.dump(dados, f, indent=4, ensure_ascii=False)
+
+def save_new_movies(filme):
+    arquivo = os.path.join(pasta_atual, '../data', 'filmes.json')
+    os.makedirs(os.path.dirname(arquivo), exist_ok=True)
+
+    if os.path.exists(arquivo):
+        with open(arquivo, 'r', encoding='utf-8') as f:
+            dados = json.load(f)
+    else:
+        dados = []
+
+    novo_filme = {'titulo': filme.titulo,
             'duracao': filme.duracao,
             'sala': filme.sala,
             'intervalo': filme.intervalo,
             'dias_disponiveis': filme.dias_disponiveis,
             'horario_inicial': filme.horario_inicial,
-            'horario_final': filme.horario_final,
-            'horarios_disponiveis': filme.horarios_disponiveis}
+            'horario_final': filme.horario_final,}
+        
+    dados.append(novo_filme)
 
     with open(arquivo, "w", encoding='utf-8') as f:
         json.dump(dados, f, indent=4, ensure_ascii=False)

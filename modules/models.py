@@ -86,7 +86,7 @@ class Filme: #ADM
         self.dias_disponiveis = dias_disponiveis # SEMANA
         self.horario_inicial = horario_inicial
         self.horario_final = horario_final
-        self.horarios_disponiveis = self.Horarios_Disponiveis()
+        self.horarios_disponiveis = self.horarios_disponiveis()
 
     def converter_horarios(self, tempo):
         tempo = tempo.lower().replace(" ", "").replace("min", "").replace("m", "")
@@ -105,7 +105,7 @@ class Filme: #ADM
         
         return int(tempo)
 
-    def Horarios_Disponiveis(self):
+    def horarios_disponiveis(self):
         from datetime import datetime, timedelta
 
         atual = datetime.strptime(self.horario_inicial, "%H:%M")
