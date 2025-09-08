@@ -6,6 +6,8 @@
 #  Implementar a escolha de assento pelo usuário [X]
 #  Permitir reserva de assentos [X]
 
+from datetime import datetime, timedelta
+
 class Section:
     def __init__(self, filme, section_id):
         self.titulo = filme
@@ -78,15 +80,19 @@ class Section:
 # section1.exibir_assentos()
 
 class Filme: #ADM
-    def __init__(self, titulo, duracao, sala, intervalo, dias_disponiveis, horario_inicial="13:00", horario_final="22:00"):
+    def __init__(self, titulo, duracao, sala, intervalo, dias_disponiveis, data_inicial, data_final, horario_inicial="13:00", horario_final="22:00"):
         self.titulo = titulo
         self.duracao = self.converter_horarios(duracao) # EM MINUTOS
         self.sala = sala
         self.intervalo = self.converter_horarios(intervalo) #EM MINUTOS
         self.dias_disponiveis = dias_disponiveis # SEMANA
+        self.data_inicial = data_inicial
+        self.data_final = data_final
         self.horario_inicial = horario_inicial
         self.horario_final = horario_final
         self.horarios_disponiveis = self.horarios_disponiveis()
+        self.movie_id = self.movie_id()
+
 
     def converter_horarios(self, tempo):
         tempo = tempo.lower().replace(" ", "").replace("min", "").replace("m", "")
@@ -105,8 +111,8 @@ class Filme: #ADM
         
         return int(tempo)
 
+
     def horarios_disponiveis(self):
-        from datetime import datetime, timedelta
 
         atual = datetime.strptime(self.horario_inicial, "%H:%M")
         limite = datetime.strptime(self.horario_final, "%H:%M")
@@ -117,6 +123,18 @@ class Filme: #ADM
             atual = atual + timedelta(minutes=self.duracao) + timedelta(minutes=self.intervalo)
 
         return horarios_disponiveis
+    
+
+    def movie_id(self):
+        movie_id = []
+
+        data_atual = self.data_inicial
+        while self.data_atual <= self.data_final:
+            for hora in self.horarios_disponiveis:
+                 movie_id.append(datetime.combine(data_atual, hora))
+                 data_atual += timedelta(days=1)
+        
+        return movie_id
         
 # filme1 = Filme("Putz, a coisa ta feia", "1:30", 1, "15", 5)
 # print(filme1.horarios_disponiveis)

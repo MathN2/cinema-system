@@ -134,16 +134,18 @@ def menu_adm():
                 else:
                     print('Valor invalido.')
                     continue
-        
+
         else:
             new_value = input(f"Digite o novo valor para a propriedade ({property_chosen}) do filme ({movie_chosen['titulo']}): ")
             movie_chosen[property_chosen] = new_value
             
         storage.save_movies(movies)
 
-            
 
-    # elif opt == '5':
+
+    elif opt == '5':
+        print("Voltando para o menu...")
+        sleep(0.5)
 
 
 
@@ -152,19 +154,29 @@ def menu_client():
     print('BEM-VINDO'.center(50, ' '))
     print('*' * 50)
 
+    movies = storage.load_movies()
+
     print("Filmes em cartaz:")
+    for index, item in enumerate(movies):
+        print(f"{index+1} {item['titulo']}")
     
+    opt = input("Digite o numero do filme que deseja assistir: ")
+    
+    filme = movies[opt-1]
+    # self, filme, section_id)
+    filme = models.Section(filme, )
+
 
 def Menu():
     print("Iniciando Sistema Cinema")
+    while True:
+        print('LOGN IN')
+        adm = input('1 - ADMINISTRADOR\n2 - CLIENTE\n')
+        adm = True if adm == '1' else False
 
-    print('LOGN IN')
-    adm = input('1 - ADMINISTRADOR\n2 - CLIENTE\n')
-    adm = True if adm == '1' else False
-
-    if adm == True:
-        menu_adm()
-        
-    else:
-        menu_client()
+        if adm == True:
+            menu_adm()
+            
+        else:
+            menu_client()
 Menu()
