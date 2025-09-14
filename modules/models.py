@@ -6,7 +6,7 @@
 #  Implementar a escolha de assento pelo usuário [X]
 #  Permitir reserva de assentos [X]
 
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 
 class Section:
     def __init__(self, filme, section_id):
@@ -81,13 +81,14 @@ class Section:
 
 class Filme: #ADM
     def __init__(self, titulo, duracao, sala, intervalo, dias_disponiveis, data_inicial, data_final, horario_inicial="13:00", horario_final="22:00"):
+        # Validar horarios. duracao >= horario_inicial - horario_final
         self.titulo = titulo
         self.duracao = self.converter_horarios(duracao) # EM MINUTOS
         self.sala = sala
         self.intervalo = self.converter_horarios(intervalo) #EM MINUTOS
         self.dias_disponiveis = dias_disponiveis # SEMANA
-        self.data_inicial = data_inicial
-        self.data_final = data_final
+        self.data_inicial = datetime.strptime(data_inicial, "%Y-%m-%d").date()
+        self.data_final = datetime.strptime(data_final, "%Y-%m-%d").date()
         self.horario_inicial = horario_inicial
         self.horario_final = horario_final
         self.horarios_disponiveis = self.horarios_disponiveis()
@@ -108,7 +109,7 @@ class Filme: #ADM
             horas = int(partes[0]) if partes[0] else 0
             minutos = int(partes[1]) if len(partes) > 1 and partes[1] else 0
             return horas * 60 + minutos
-        
+
         return int(tempo)
 
 
@@ -119,7 +120,7 @@ class Filme: #ADM
         horarios_disponiveis = []
 
         while atual + timedelta(minutes=self.duracao) <= limite:
-            horarios_disponiveis.append(atual.strftime("%H:%M"))
+            horarios_disponiveis.append(atual.time())
             atual = atual + timedelta(minutes=self.duracao) + timedelta(minutes=self.intervalo)
 
         return horarios_disponiveis
@@ -127,14 +128,11 @@ class Filme: #ADM
 
     def movie_id(self):
         movie_id = []
-
         data_atual = self.data_inicial
-        while self.data_atual <= self.data_final:
+
+        while data_atual <= self.data_final:
             for hora in self.horarios_disponiveis:
-                 movie_id.append(datetime.combine(data_atual, hora))
-                 data_atual += timedelta(days=1)
-        
+                 movie_id.append(datetime.combine(data_atual, hora).strftime("%Y-%m-%d_%H:%M"))
+            data_atual += timedelta(days=1)
+
         return movie_id
-        
-# filme1 = Filme("Putz, a coisa ta feia", "1:30", 1, "15", 5)
-# print(filme1.horarios_disponiveis)

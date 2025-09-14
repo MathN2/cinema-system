@@ -1,9 +1,9 @@
 [
     {
         "titulo": "Bob Esponja The Movie",
-        "duracao": 72,
+        "duracao": "72",
         "sala": "1",
-        "intervalo": 15,
+        "intervalo": "15",
         "dias_disponiveis": {
             "domingo": false,
             "segunda": true,
@@ -13,7 +13,9 @@
             "sexta": true,
             "sabado": false
         },
-        "horario_inicial": "22:30",
+        "data_inicial": "2025-9-1",
+        "data_final": "2025-9-10",
+        "horario_inicial": "12:30",
         "horario_final": "22:30"
     },
     {

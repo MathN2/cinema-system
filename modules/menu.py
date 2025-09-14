@@ -25,7 +25,7 @@ def menu_adm():
             4 - Alterar configuração de filme.
             5 - Sair.
             """)
-    opt = input("")
+    opt = input("")#Validar
     if opt == '1':
         print("")
         for i, t in enumerate(movies):
@@ -33,9 +33,9 @@ def menu_adm():
 
     elif opt == '2':
         titulo = input("Digite o Título do Filme: ")
-        duracao = input("Digite a duração do Filme (em minutos): ")
-        sala = input("Digite a(s) sala(s) que o Filme estará disponivel: ")
-        intervalo = input("Digite o tempo de intervalo entre uma sessão e outra: ")
+        duracao = input("Digite a duração do Filme (em minutos): ")#Validar
+        sala = input("Digite a(s) sala(s) que o Filme estará disponivel: ")#Validar e Melhorar
+        intervalo = input("Digite o tempo de intervalo entre uma sessão e outra: ")#Validar
 
         dias_disponiveis = {'domingo': True,
                             'segunda': True,
@@ -102,7 +102,7 @@ def menu_adm():
             print(f'{index + 1} - {chave}')
         
         # Convertendo o index para o nome da propriedade
-        property_chosen = int(input()) - 1
+        property_chosen = int(input()) - 1 #Validar
         for index, (chave, valor) in enumerate(movie_chosen.items()):
             print(index, chave)
             if index == property_chosen:
@@ -117,7 +117,7 @@ def menu_adm():
                     print(f"{index+1} - {dia.center(8, ' ')} : {valor}")
                     print("0 - Concluir")
 
-                switch = input()
+                switch = input() #Validar
                 if switch in ('1', '2', '3', '4', '5', '6', '7'):
                     switch = int(switch)-1
                     chave = list(dias_disponiveis.keys())[switch]
@@ -160,17 +160,24 @@ def menu_client():
     for index, item in enumerate(movies):
         print(f"{index+1} {item['titulo']}")
     
-    opt = input("Digite o numero do filme que deseja assistir: ")
-    
-    filme = movies[opt-1]
+    opt = int(input("Escolha o numero do filme que deseja assistir: ")) #Validar
+    print("")
+
+    filme = models.Filme(**movies[opt-1])
+
+    user_day = int(input("Escolha um dia para assistir o filme:"))
+
     # self, filme, section_id)
-    filme = models.Section(filme, )
+    filme_section = models.Section(filme, filme.movie_id)
+    print(filme_section.__dict__)
+
 
 
 def Menu():
     print("Iniciando Sistema Cinema")
     while True:
         print('LOGN IN')
+        #Melhorar
         adm = input('1 - ADMINISTRADOR\n2 - CLIENTE\n')
         adm = True if adm == '1' else False
 
