@@ -2,20 +2,37 @@
 
 #  Salvar Filmes e Sessao em arquivos JSON [X]
 #  Carregar arquivos JSON []
+from datetime import datetime, date, time
 import os
 import json
-from models import Section
+import models
 
 pasta_atual = os.path.dirname(os.path.abspath(__file__))
 
-def save_movies(filme):
+def save_movies(filme_modificado):
     arquivo = os.path.join(pasta_atual, '../data', 'filmes.json')
     os.makedirs(os.path.dirname(arquivo), exist_ok=True)
+    filmes = load_movies()
 
-    dados = filme
+    for i, f in enumerate(filmes):
+        if f['id'] == filme_modificado.id:
+            print(filme_modificado.__dict__)
+            filmes[i] = filme_modificado
+            break
+    
+    for i, dados in enumerate(filmes):
+        # print(type(dados))
+        if isinstance(dados, models.Filme):
+            filmes[i] = dados.to_dict()
+        else:
+            for chave, valores in filmes[i].items():
+                if isinstance(valores, date):
+                    filmes[i][chave] = valores.strftime("%Y-%m-%d")
+                elif isinstance(valores, time):
+                    filmes[i][chave] = valores.strftime("%H:%M:%S")
 
     with open(arquivo, "w", encoding='utf-8') as f:
-        json.dump(dados, f, indent=4, ensure_ascii=False)
+        json.dump(filmes, f, indent=4, ensure_ascii=False)
 
 def save_new_movies(filme):
     arquivo = os.path.join(pasta_atual, '../data', 'filmes.json')
@@ -27,13 +44,7 @@ def save_new_movies(filme):
     else:
         dados = []
 
-    novo_filme = {'titulo': filme.titulo,
-            'duracao': filme.duracao,
-            'sala': filme.sala,
-            'intervalo': filme.intervalo,
-            'dias_disponiveis': filme.dias_disponiveis,
-            'horario_inicial': filme.horario_inicial,
-            'horario_final': filme.horario_final,}
+    novo_filme = filme.to_dict()
         
     dados.append(novo_filme)
 
@@ -77,6 +88,17 @@ def load_movies():
     with open(arquivo, 'r', encoding='utf-8') as f:
         dados = json.load(f)
 
+    if isinstance(dados, dict):
+        dados = [dados]
+    else:
+        for dado in dados:
+            dado['duracao'] = datetime.strptime(dado['duracao'], "%H:%M:%S").time()
+            dado['intervalo'] = datetime.strptime(dado['intervalo'], "%H:%M:%S").time()
+            dado['data_inicial'] = datetime.strptime(dado['data_inicial'], "%Y-%m-%d").date()
+            dado['data_final'] = datetime.strptime(dado['data_final'], "%Y-%m-%d").date()
+            dado['horario_inicial'] = datetime.strptime(dado['horario_inicial'], "%H:%M:%S").time()
+            dado['horario_final'] = datetime.strptime(dado['horario_final'], "%H:%M:%S").time()
+
     return dados
 
 
@@ -93,7 +115,7 @@ def load_section(filme, section_id):
         return None
     
     dados = conteudo['sessoes'][str(section_id)]
-    section = Section(dados['filme'], dados['section_id'])
+    section = models.Section(dados['filme'], dados['section_id'])
 
     section.assentos = {
         linha: ['[O]' if cadeira == 0 else 1 for cadeira in colunas]

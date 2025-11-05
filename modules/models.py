@@ -80,48 +80,55 @@ class Section:
 # section1.exibir_assentos()
 
 class Filme: #ADM
-    def __init__(self, titulo, duracao, sala, intervalo, dias_disponiveis, data_inicial, data_final, horario_inicial="13:00", horario_final="22:00"):
+    def __init__(self, id, titulo, duracao, sala, intervalo, dias_disponiveis, data_inicial, data_final, horario_inicial, horario_final):
         # Validar horarios. duracao >= horario_inicial - horario_final
+        self.id = id
         self.titulo = titulo
-        self.duracao = self.converter_horarios(duracao) # EM MINUTOS
+        self.duracao = duracao # Formato hh:mm
         self.sala = sala
-        self.intervalo = self.converter_horarios(intervalo) #EM MINUTOS
-        self.dias_disponiveis = dias_disponiveis # SEMANA
-        self.data_inicial = datetime.strptime(data_inicial, "%Y-%m-%d").date()
-        self.data_final = datetime.strptime(data_final, "%Y-%m-%d").date()
+        self.intervalo = intervalo # Formato hh:mm
+        self.dias_bool = dias_disponiveis # SEMANA
+        self.dias_disponiveis = self.filtrar_dias() # SEMANA / Pronto pro Weekday 
+        self.data_inicial = data_inicial
+        self.data_final = data_final
         self.horario_inicial = horario_inicial
         self.horario_final = horario_final
         self.horarios_disponiveis = self.horarios_disponiveis()
         self.movie_id = self.movie_id()
 
+    
+    def to_dict(self):
+        return {'id': self.id,
+            'titulo': self.titulo,
+            'duracao': self.duracao.strftime("%H:%M:%S"),
+            'sala': self.sala,
+            'intervalo': self.intervalo.strftime("%H:%M:%S"),
+            'dias_disponiveis': self.dias_disponiveis,
+            'data_inicial': self.data_inicial.strftime("%Y-%m-%d"),
+            'data_final': self.data_final.strftime("%Y-%m-%d"),
+            'horario_inicial': self.horario_inicial.strftime("%H:%M:%S"),
+            'horario_final': self.horario_final.strftime("%H:%M:%S"),}
 
-    def converter_horarios(self, tempo):
-        tempo = tempo.lower().replace(" ", "").replace("min", "").replace("m", "")
 
-        if ':' in tempo:
-            partes = tempo.split(":")
-            horas = int(partes[0])
-            minutos = int(partes[1])
-            return horas * 60 + minutos
+    def filtrar_dias(self):
+        # Filtrando e Tratando Dias Disponiveis
+        dias_disponiveis = {}
+        for indice, (dia, valor) in enumerate(self.dias_bool.items()):
+            if valor:
+                dias_disponiveis[dia] = indice
         
-        if 'h' in tempo:
-            partes = tempo.split("h")
-            horas = int(partes[0]) if partes[0] else 0
-            minutos = int(partes[1]) if len(partes) > 1 and partes[1] else 0
-            return horas * 60 + minutos
-
-        return int(tempo)
+        return dias_disponiveis
 
 
     def horarios_disponiveis(self):
-
-        atual = datetime.strptime(self.horario_inicial, "%H:%M")
-        limite = datetime.strptime(self.horario_final, "%H:%M")
+        atual = datetime.combine(date(2000, 1, 1), self.horario_inicial)
+        limite = datetime.combine(date(2000, 1, 1), self.horario_final)
+        duracao = self.duracao.hour * 60 + self.duracao.minute
         horarios_disponiveis = []
 
-        while atual + timedelta(minutes=self.duracao) <= limite:
+        while atual + timedelta(minutes = duracao) <= limite:
             horarios_disponiveis.append(atual.time())
-            atual = atual + timedelta(minutes=self.duracao) + timedelta(minutes=self.intervalo)
+            atual = atual + timedelta(minutes = duracao) + timedelta(minutes = self.intervalo.hour * 60 + self.intervalo.minute)
 
         return horarios_disponiveis
     
@@ -136,3 +143,22 @@ class Filme: #ADM
             data_atual += timedelta(days=1)
 
         return movie_id
+    
+
+def converter_tempo():
+    while True:
+        entrada = input()
+        try:
+            duracao = datetime.strptime(entrada, "%H:%M").time()
+            return duracao
+        except ValueError:
+            print('Formato inválido. Use o padrão hh:mm.')
+
+def converter_data():
+    while True:
+        entrada = input()
+        try:
+            data = datetime.strptime(entrada, "%Y-%m-%d").date()
+            return data
+        except ValueError:
+            print('Formato inválido. Use o padrão yyyy-mm-dd.')

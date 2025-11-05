@@ -1,28 +1,28 @@
 [
     {
-        "titulo": "Bob Esponja The Movie",
-        "duracao": "72",
+        "id": 0,
+        "titulo": "Bob Esponja",
+        "duracao": "02:49:00",
         "sala": "1",
-        "intervalo": "15",
+        "intervalo": "00:05:00",
         "dias_disponiveis": {
-            "domingo": false,
-            "segunda": true,
-            "terca": true,
-            "quarta": true,
-            "quinta": true,
-            "sexta": true,
-            "sabado": false
+            "segunda": 0,
+            "terca": 1,
+            "quarta": 2,
+            "quinta": 3,
+            "sexta": 4
         },
-        "data_inicial": "2025-9-1",
-        "data_final": "2025-9-10",
-        "horario_inicial": "12:30",
-        "horario_final": "22:30"
+        "data_inicial": "2025-09-01",
+        "data_final": "2025-09-10",
+        "horario_inicial": "12:30:00",
+        "horario_final": "22:30:00"
     },
     {
+        "id": 1,
         "titulo": "Avengers",
-        "duracao": 72,
+        "duracao": "02:49:00",
         "sala": "1",
-        "intervalo": 15,
+        "intervalo": "00:05:00",
         "dias_disponiveis": {
             "domingo": false,
             "segunda": true,
@@ -32,7 +32,29 @@
             "sexta": true,
             "sabado": false
         },
-        "horario_inicial": "22:30",
-        "horario_final": "22:30"
+        "data_inicial": "2014-11-05",
+        "data_final": "2014-12-05",
+        "horario_inicial": "10:00:00",
+        "horario_final": "23:00:00"
+    },
+    {
+        "id": 2,
+        "titulo": "Interstellar",
+        "duracao": "02:49:00",
+        "sala": "1",
+        "intervalo": "00:05:00",
+        "dias_disponiveis": {
+            "segunda": 0,
+            "terca": 1,
+            "quarta": 2,
+            "quinta": 3,
+            "sexta": 4,
+            "sabado": 5,
+            "domingo": 6
+        },
+        "data_inicial": "2014-11-05",
+        "data_final": "2014-12-05",
+        "horario_inicial": "10:00:00",
+        "horario_final": "23:00:00"
     }
 ]
