@@ -1,6 +1,6 @@
 [
     {
-        "id": 0,
+        "filme_id": 0,
         "titulo": "Bob Esponja",
         "duracao": "02:49:00",
         "sala": "1",
@@ -18,7 +18,7 @@
         "horario_final": "22:30:00"
     },
     {
-        "id": 1,
+        "filme_id": 1,
         "titulo": "Avengers",
         "duracao": "02:49:00",
         "sala": "1",
@@ -38,7 +38,7 @@
         "horario_final": "23:00:00"
     },
     {
-        "id": 2,
+        "filme_id": 2,
         "titulo": "Interstellar",
         "duracao": "02:49:00",
         "sala": "1",

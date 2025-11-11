@@ -1,48 +1,92 @@
-# MENU PARA INTERAÇÃO DO USUARIO
+# ⋯⋯⋯⋯ Explicacao ⋯⋯⋯⋯
+#     Interface no terminal para interacao direta com o usuario (Administrador ou Cliente).
 
-#  Definir valores de ingresso (inteira e meia) []
-#  Exibir resumo da compra (assento, filme, horário, valor) []
-#  Calcular valor total da compra []
-#  Login de ADM e login de cliente []
-#  Interface de texto (inicial) []
-#  (Futuramente) Adicionar interface gráfica []
+
+# ⋯⋯⋯⋯ To Do ⋯⋯⋯⋯
+#     Definir valores de ingresso (inteira e meia) []
+#     Exibir resumo da compra (assento, filme, horário, valor) []
+#     Calcular valor total da compra []
+#     Login de ADM e login de cliente []
+#     Interface de texto (inicial) []
+#     (Futuramente) Adicionar interface gráfica []
+
 
 from datetime import datetime
 import models
 import storage
-from time import sleep
 
 
+# ================================================================
+#                     MENU PARA O ADMINISTRADOR
+# ================================================================
 def menu_adm():
-    movies = storage.load_movies()
+    """
+    Exibe a interface para administradores.
+    Possibilita gerenciar os filmes e sessoes.
+
+    Funcionabilidades:
+        Exibir filmes cadastrados.
+        Cadastrar novo filme.
+        Remover filme.
+        Alterar configuração de filme.
+    """
+
+    lista_filmes = storage.load_movies()
 
     print("Acessando serviços de Administrador...")
-    # sleep(0.3)
 
     print("""
             1 - Exibir filmes cadastrados.
             2 - Cadastrar novo filme.
             3 - Remover filme.
             4 - Alterar configuração de filme.
-            5 - Sair.
-            """)
-    opt = input("")#Validar
-    if opt == '1':
-        print("")
-        for i, t in enumerate(movies):
-            print(f"{i+1} - {t['titulo']}")
+            5 - Sair.""")
+    opcao = input("")#Validar
 
-    elif opt == '2':
+    if opcao == '1':
+        # Exibe o titulo dos filmes já cadastrados.
+
+        print("") # Apenas para criar um espaçamento
+        for index, key in enumerate(lista_filmes):
+            print(f"{index+1} - {key['titulo']}")
+        print("") # Apenas para criar um espaçamento
+
+    elif opcao == '2':
+        """
+        Cadastra um novo filme e salva no arquivo JSON.
+
+        Requirements:
+            filme_id (int): Identificacao Unica do filme.
+            titulo (str): Nome do filme.
+            duracao (time): Duracao de cada exibicao do filme.
+            sala (ainda n definido):
+            intervalo (time): Tempo entre uma sessao e outra.
+            dias_disponiveis (dict): Dias da semana disponiveis (bools).
+            data_inicial (date): Data de inicio das exibicoes.
+            data_final (date): Data final das exibicoes.
+            horario_inicial (time): Horario da primeira sessao desse filme no dia.
+            horario_final (time): Horario limite para iniciar uma sessao.
+        """ 
+        # FILME_ID:
+        filme_id = len(lista_filmes)
+
+        # TITULO:
         titulo = input("Digite o Título do Filme: ")
 
+        # DURACAO:
         print("Digite a duração do filme (formato hh:mm): ")
-        duracao = models.converter_tempo()
+        duracao = models.converter_tempo() # Converte para datetime.time
 
+        # SALA:
         sala = input("Digite a(s) sala(s) que o Filme estará disponivel: ")#Validar e Melhorar
 
+        # INTERVALO:
         print("Digite o tempo de intervalo do filme (formato hh:mm): ")
-        intervalo = models.converter_tempo()
+        intervalo = models.converter_tempo() # Converte para datetime.time
 
+        # DIAS_DISPONIVEIS:
+        
+        # Defini dicionario com os dias da semana.
         dias_disponiveis_bool = {
                             'segunda': True,
                             'terca': True,
@@ -52,16 +96,18 @@ def menu_adm():
                             'sabado': True,
                             'domingo': True
                             }
+        
         print("Escolha os dias da semana que esse filme estará disponivel: ")
         while True:
             for index, (dia, valor) in enumerate(dias_disponiveis_bool.items()):
                 print(f"{index+1} - {dia.center(8, ' ')} : {valor}")
-
             print("0 - Concluir")
-            switch = input()
-            if switch in ('1', '2', '3', '4', '5', '6', '7'):
-                switch = int(switch)-1
-                chave = list(dias_disponiveis_bool.keys())[switch]
+
+            # Possibilita o administrador escolher quais dias o filme estará disponivel (mudando dias_disponiveis_bool entre True e False)
+            alternar_dia = input()
+            if alternar_dia in ('1', '2', '3', '4', '5', '6', '7'):
+                alternar_dia = int(alternar_dia)-1
+                chave = list(dias_disponiveis_bool.keys())[alternar_dia]
                 
                 if dias_disponiveis_bool[chave] == True:
                     dias_disponiveis_bool[chave] = False
@@ -69,104 +115,114 @@ def menu_adm():
                 elif dias_disponiveis_bool[chave] == False:
                     dias_disponiveis_bool[chave] = True
             
-            elif switch == '0':
+            elif alternar_dia == '0':
                 break
 
             else:
                 print('Valor invalido.')
                 continue
-
+        
+        # DATA INICIAL:
         print('Digite a data inicial para o filme (formato yyyy-mm-dd):')
         data_inicial = models.converter_data()
 
+        # DATA FINAL:
         print('Digite a data final para o filme (formato yyyy-mm-dd):')
         data_final = models.converter_data()
         
+        # HORARIO INICIAL:
         print("Digite o horario da primeira sessão desse filme no dia (formato hh:mm): ")
         horario_inicial = models.converter_tempo()
 
+        # HORARIO FINAL: 
         print("Digite o horario da ultima sessão desse filme no dia (formato hh:mm): ")
         horario_final = models.converter_tempo()
 
-        filme = models.Filme(titulo, duracao, sala, intervalo, dias_disponiveis_bool, data_inicial, data_final, horario_inicial, horario_final)
+        # Cria Objeto Movie com os dados coletados e salva no arquivo JSON.
+        filme = models.Filme(filme_id, titulo, duracao, sala, intervalo, dias_disponiveis_bool, data_inicial, data_final, horario_inicial, horario_final)
         storage.save_new_movies(filme)
 
 
-    elif opt == '3':
+    elif opcao == '3':
+        """
+        Apaga um filme cadastrado no arquivo JSON.
+        """
         nome_filme = input('Digite o nome do filme a ser apagado: ')
 
-        for index, filme in enumerate(movies):
-            if filme["titulo"].lower() == nome_filme.lower():
-                print(filme['titulo'], nome_filme)
-                del movies[index]
+        for index, key in enumerate(lista_filmes):
+            if key["titulo"].lower() == nome_filme.lower():
+                print(key['titulo'], nome_filme)
+                del lista_filmes[index]
                 break
 
-        storage.save_movies(movies)
+        storage.save_movies(lista_filmes)
 
 
-    elif opt == '4':
-        # Escolhendo um filme para fazer a alteração
+    elif opcao == '4':
+        """
+        Altera uma propriedade de um filme salvo no arquivo JSON
+        """
         print("Qual filme deseja alterar?")
-        for index, filme in enumerate(movies):
-            print(f'{index + 1} - {filme["titulo"]}')
+        for index, key in enumerate(lista_filmes):
+            print(f'{index + 1} - {key["titulo"]}')
         
-        movie_chosen = int(input()) - 1
-        movie_chosen = movies[movie_chosen]
+        filme_selecionado = int(input()) - 1
+        filme_selecionado = lista_filmes[filme_selecionado]
 
         # Escolhendo uma propriedade do filme para fazer a alteração
         print("Escolha a propriedade que deseja alterar:")
-        for index, chave in enumerate(movie_chosen):
-            if not chave == 'id':
-                print(f'{index} - {chave}')
+        for index, key in enumerate(filme_selecionado):
+            if not key == 'id':
+                print(f'{index} - {key}')
         
         # Convertendo o index para o nome da propriedade
-        property_chosen = int(input()) #Validar
-        for index, (chave, valor) in enumerate(movie_chosen.items()):
-            if not chave == 'id':
-                print(index, chave)
-            if index == property_chosen:
-                property_chosen = chave 
+        propriedade_selecionada = int(input()) #Validar
+        for index, (key, valor) in enumerate(filme_selecionado.items()):
+            if not key == 'id':
+                print(index, key)
+            if index == propriedade_selecionada:
+                propriedade_selecionada = key 
 
         #Propriedades dos filmes(titulo, duracao, sala, intervalo, dias_disponiveis, data_inicial, data_final, horario_inicial, horario_final)
         # Alterar Titulo do Filme
-        if property_chosen == 'titulo':
-            movie_chosen['titulo'] = input('Digite o novo TITULO para o filme: ')
+        if propriedade_selecionada == 'titulo':
+            filme_selecionado['titulo'] = input('Digite o novo TITULO para o filme: ')
 
         # Alterar Duracao do Filme
-        elif property_chosen == 'duracao':
+        elif propriedade_selecionada == 'duracao':
             print("Digite a nova duração do filme (formato hh:mm): ")
-            movie_chosen['duracao'] = models.converter_tempo()
+            filme_selecionado['duracao'] = models.converter_tempo()
 
         # Alterar Salas do Filme
-        elif property_chosen == 'sala': # Ainda vou definir o formato das salas
-            movie_chosen['sala'] = input()
+        elif propriedade_selecionada == 'sala': # Ainda vou definir o formato das salas
+            filme_selecionado['sala'] = input()
 
         # Alterar Intervalo entre sessoes do Filme
-        elif property_chosen == 'intervalo':
+        elif propriedade_selecionada == 'intervalo':
             print('Digite o novo tempo de intervalo do filme (formato hh:mm): ')
-            movie_chosen['intervalo'] = models.converter_tempo()
+            filme_selecionado['intervalo'] = models.converter_tempo()
 
         # Interface dos dias da semana disponivel, caso essa seja a alteração do usuario
-        elif property_chosen == 'dias_disponiveis_bool':
+        elif propriedade_selecionada == 'dias_disponiveis_bool':
             print("Escolha os dias da semana que esse filme estará disponivel: ")
-            dias_disponiveis_bool = movie_chosen['dias_disponiveis_bool']
+            dias_disponiveis_bool = filme_selecionado['dias_disponiveis_bool']
             while True:
                 for index, (dia, valor) in enumerate(dias_disponiveis_bool.items()):
                     print(f"{index+1} - {dia.center(8, ' ')} : {valor}")
                     print("0 - Concluir")
 
-                switch = input() #Validar
-                if switch in ('1', '2', '3', '4', '5', '6', '7'):
-                    switch = int(switch)-1
-                    chave = list(dias_disponiveis_bool.keys())[switch]
+                alternar_dia = input() #Validar
+                if alternar_dia in ('1', '2', '3', '4', '5', '6', '7'):
+                    alternar_dia = int(alternar_dia)-1
+                    key = list(dias_disponiveis_bool.keys())[alternar_dia]
                     
-                    if dias_disponiveis_bool[chave] == True:
-                        dias_disponiveis_bool[chave] = False
+                    if dias_disponiveis_bool[key] == True:
+                        dias_disponiveis_bool[key] = False
 
-                    elif dias_disponiveis_bool[chave] == False:
-                        dias_disponiveis_bool[chave] = True
+                    elif dias_disponiveis_bool[key] == False:
+                        dias_disponiveis_bool[key] = True
                 
-                elif switch == '0':
+                elif alternar_dia == '0':
                     break
 
                 else:
@@ -174,65 +230,80 @@ def menu_adm():
                     continue
 
         # Alterar data que indica primeiro dia de exibicao do filme
-        elif property_chosen == 'data_inicial':
+        elif propriedade_selecionada == 'data_inicial':
             print('Digite a nova data inicial para o filme (formato yyyy-mm-dd):')
-            movie_chosen['data_inicial'] = models.converter_data()
+            filme_selecionado['data_inicial'] = models.converter_data()
 
         # Alterar data que indica ultimo dia de exibicao do filme
-        elif property_chosen == 'data_final':
+        elif propriedade_selecionada == 'data_final':
             print('Digite a nova data final para o filme (formato yyyy-mm-dd):')
-            movie_chosen['data_final'] = models.converter_data()
+            filme_selecionado['data_final'] = models.converter_data()
 
         # Alterar horario da primeira exibicao do dia
-        elif property_chosen == 'horario_inicial':
+        elif propriedade_selecionada == 'horario_inicial':
             print("Digite o horario da primeira sessão desse filme no dia (formato hh:mm): ")
-            movie_chosen['horario_inicial'] = models.converter_tempo()
+            filme_selecionado['horario_inicial'] = models.converter_tempo()
 
         # Alterar horario ultimo possivel para exibicao do dia
-        elif property_chosen == 'horario_final':
+        elif propriedade_selecionada == 'horario_final':
             print("Digite o horario da ultima sessão desse filme no dia (formato hh:mm): ")
-            movie_chosen['horario_final'] = models.converter_tempo()
+            filme_selecionado['horario_final'] = models.converter_tempo()
 
         else:
-            new_value = input(f"Digite o novo valor para a propriedade ({property_chosen}) do filme ({movie_chosen['titulo']}): ")
-            movie_chosen[property_chosen] = new_value
+            new_value = input(f"Digite o novo valor para a propriedade ({propriedade_selecionada}) do filme ({filme_selecionado['titulo']}): ")
+            filme_selecionado[propriedade_selecionada] = new_value
         
-        movie_chosen = models.Filme(**movie_chosen)
-        storage.save_movies(movie_chosen)
+        filme_selecionado = models.Filme(**filme_selecionado)
+        storage.save_movies(filme_selecionado)
 
 
-
-    elif opt == '5':
+    elif opcao == '5':
+        # Volta para o Menu Principal
         print("Voltando para o menu...")
-        sleep(0.3)
 
 
 
+# ================================================================
+#                     MENU PARA O CLIENTE
+# ================================================================
 def menu_client():
+    """
+    Mostra os filmes em exibicao e permite o usuario escolher o filme, sessao, assentos para comprar.
+
+    *EM PROGRESSO*
+    """
     print('*' * 50)
     print('BEM-VINDO'.center(50, ' '))
     print('*' * 50)
 
-    movies = storage.load_movies()
+    lista_filmes = storage.load_movies()
 
     print("Filmes em cartaz:")
-    for index, item in enumerate(movies):
+    for index, item in enumerate(lista_filmes):
         print(f"{index+1} {item['titulo']}")
     
-    opt = int(input("Escolha o filme que deseja assistir: /n")) #Validar
+    opcao = int(input("Escolha o filme que deseja assistir: /n")) #Validar
 
-    filme = models.Filme(**movies[opt-1])
+    filme = models.Filme(**lista_filmes[opcao-1])
 
     
-    user_day = int(input("Escolha um dia para assistir o filme:"))
+    dia_selecionado = int(input("Escolha um dia para assistir o filme:"))
 
-    # self, filme, section_id)
-    filme_section = models.Section(filme, filme.movie_id)
-    print(filme_section.__dict__)
+    # self, filme, section_id
+    sessao_filme = models.Section(filme, filme.movie_id)
+    print(sessao_filme.__dict__)
 
 
 
-def Menu():
+# ================================================================
+#                       MENU PRINCIPAL
+# ================================================================
+def menu_principal():
+    """
+    Mostra o menu principal, permitindo o usuario escolher o tipo de Login fazer (Administrador ou Cliente).
+
+    *EM PROGRESSO*
+    """
     print("Iniciando Sistema Cinema")
     while True:
         print('LOGN IN')
@@ -245,4 +316,4 @@ def Menu():
             
         else:
             menu_client()
-Menu()
+menu_principal()

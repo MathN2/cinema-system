@@ -1,29 +1,46 @@
-# SALVAR E CARREGAR OS ARQUIVOS JSON COM INFORMAÇÕES DOS FILMES E SESSÕES
+# ⋯⋯⋯⋯ Explicacao ⋯⋯⋯⋯
+#     Modulo responsavel por salvar e carregar os arquivos JSON com informacoes dos filmes e sessoes.
 
-#  Salvar Filmes e Sessao em arquivos JSON [X]
-#  Carregar arquivos JSON []
-from datetime import datetime, date, time
+
+# ⋯⋯⋯⋯ To Do ⋯⋯⋯⋯
+#     Salvar Filmes e Sessao em arquivos JSON [X]
+#     Carregar arquivos JSON [X]
+
+
 import os
 import json
+from datetime import datetime, date, time
 import models
 
+# Caminho base do diretorio atual (para construir caminhos relativos)
 pasta_atual = os.path.dirname(os.path.abspath(__file__))
 
+# ================================================================
+#                         SALVAR FILMES
+# ================================================================
 def save_movies(filme_modificado):
-    arquivo = os.path.join(pasta_atual, '../data', 'filmes.json')
-    os.makedirs(os.path.dirname(arquivo), exist_ok=True)
-    filmes = load_movies()
+    """
+    Atualiza um filme existente no arquivo JSON.
 
+    Args:
+        filme_modificado (models.Filme): objeto Filme atualizado.
+    """
+
+    caminho_arquivo = os.path.join(pasta_atual, '../data', 'filmes.json')
+
+    os.makedirs(os.path.dirname(caminho_arquivo), exist_ok=True)
+    filmes = load_movies() or []
+
+    # Substitui filme com mesmo ID
     for i, f in enumerate(filmes):
-        if f['id'] == filme_modificado.id:
-            print(filme_modificado.__dict__)
+        if f['filme_id'] == filme_modificado.filme_id:
             filmes[i] = filme_modificado
             break
     
-    for i, dados in enumerate(filmes):
-        # print(type(dados))
-        if isinstance(dados, models.Filme):
-            filmes[i] = dados.to_dict()
+    # Converte objetos Filme e tipos de data/hora para formatos serializaveis
+    for i, filme in enumerate(filmes):
+        if isinstance(filme, models.Movie):
+            filmes[i] = filme.to_dict()
         else:
             for chave, valores in filmes[i].items():
                 if isinstance(valores, date):
@@ -31,91 +48,133 @@ def save_movies(filme_modificado):
                 elif isinstance(valores, time):
                     filmes[i][chave] = valores.strftime("%H:%M:%S")
 
-    with open(arquivo, "w", encoding='utf-8') as f:
+    with open(caminho_arquivo, "w", encoding='utf-8') as f:
         json.dump(filmes, f, indent=4, ensure_ascii=False)
 
-def save_new_movies(filme):
-    arquivo = os.path.join(pasta_atual, '../data', 'filmes.json')
-    os.makedirs(os.path.dirname(arquivo), exist_ok=True)
 
-    if os.path.exists(arquivo):
-        with open(arquivo, 'r', encoding='utf-8') as f:
-            dados = json.load(f)
+# ================================================================
+#                         SALVAR NOVO FILME
+# ================================================================
+def save_new_movies(filme):
+    """
+    Adiciona um novo filme ao arquivo JSON.
+    Cria o arquivo se ele ainda não existir.
+    """
+    caminho_arquivo = os.path.join(pasta_atual, '../data', 'filmes.json')
+    
+    os.makedirs(os.path.dirname(caminho_arquivo), exist_ok=True)
+
+    if os.path.exists(caminho_arquivo):
+        with open(caminho_arquivo, 'r', encoding='utf-8') as f:
+            dados_filme = json.load(f)
     else:
-        dados = []
+        dados_filme = []
 
     novo_filme = filme.to_dict()
         
-    dados.append(novo_filme)
+    dados_filme.append(novo_filme)
 
-    with open(arquivo, "w", encoding='utf-8') as f:
-        json.dump(dados, f, indent=4, ensure_ascii=False)
+    with open(caminho_arquivo, "w", encoding='utf-8') as f:
+        json.dump(dados_filme, f, indent=4, ensure_ascii=False)
 
 
-def save_section(section):
-    arquivo = os.path.join(pasta_atual, f'../dados/{section.titulo}.json')
-    os.makedirs(os.path.dirname(arquivo), exist_ok=True)
+# ================================================================
+#                         SALVAR SESSAO
+# ================================================================
+def save_section(sessao):
+    """
+    Salva os dados de uma sessao (assentos, filme, ID) em um arquivo JSON separado.
+
+    Args:
+        sessao (models.Section): objeto contendo os dados da sessao
+    """
+    caminho_arquivo = os.path.join(pasta_atual, f'../data/{sessao.titulo}.json')
+
+    os.makedirs(os.path.dirname(caminho_arquivo), exist_ok=True)
     
+    # Converte assentos para formato numerico (0 = disponivel, 1 = ocupado)
     assentos = {
-        linha: [0 if a == '[O]' else 1 for a in section.assentos]
-        for linha, colunas in section.assentos.items()
+        linha: [0 if a == '[O]' else 1 for a in sessao.assentos]
+        for linha, colunas in sessao.assentos.items()
     }
 
-    dados = {
-        "filme": section.titulo,
-        "section_id": section.id,
+    dados_sessao = {
+        "filme": sessao.titulo,
+        "sessao_id": sessao.sessao_id,
         "assentos": assentos
     }
     
-    if os.path.exists(arquivo):
-        with open(arquivo, 'r', encoding='utf-8') as f:
+    if os.path.exists(caminho_arquivo):
+        with open(caminho_arquivo, 'r', encoding='utf-8') as f:
             conteudo = json.load(f)
     else:
         conteudo = {'sessoes': {}}
 
-    conteudo['sessoes'][str(section.id)] = dados
+    conteudo['sessoes'][str(sessao.sessao_id)] = dados_sessao
 
-    with open(arquivo, 'w', encoding='utf-8') as f:
+    with open(caminho_arquivo, 'w', encoding='utf-8') as f:
         json.dump(conteudo, f, indent=4, ensure_ascii=False)
 
 
+# ================================================================
+#                         CARREGAR FILMES
+# ================================================================
 def load_movies():
-    arquivo = os.path.join(pasta_atual, '..', 'data', 'filmes.json')
-    if not os.path.exists(arquivo):
+    """
+    Carrega todos os filmes do arquivo JSON,
+
+    Returns:
+        list[dict] | None: Lista de dicionarios com os filmes ou None se nao houver dados.
+    """
+    caminho_arquivo = os.path.join(pasta_atual, '..', 'data', 'filmes.json')
+    if not os.path.exists(caminho_arquivo):
         print('Nenhum filme encontrado.')
         return None
 
-    with open(arquivo, 'r', encoding='utf-8') as f:
+    with open(caminho_arquivo, 'r', encoding='utf-8') as f:
         dados = json.load(f)
 
     if isinstance(dados, dict):
         dados = [dados]
-    else:
-        for dado in dados:
-            dado['duracao'] = datetime.strptime(dado['duracao'], "%H:%M:%S").time()
-            dado['intervalo'] = datetime.strptime(dado['intervalo'], "%H:%M:%S").time()
-            dado['data_inicial'] = datetime.strptime(dado['data_inicial'], "%Y-%m-%d").date()
-            dado['data_final'] = datetime.strptime(dado['data_final'], "%Y-%m-%d").date()
-            dado['horario_inicial'] = datetime.strptime(dado['horario_inicial'], "%H:%M:%S").time()
-            dado['horario_final'] = datetime.strptime(dado['horario_final'], "%H:%M:%S").time()
+    
+    for filme in dados:
+        filme['duracao'] = datetime.strptime(filme['duracao'], "%H:%M:%S").time()
+        filme['intervalo'] = datetime.strptime(filme['intervalo'], "%H:%M:%S").time()
+        filme['data_inicial'] = datetime.strptime(filme['data_inicial'], "%Y-%m-%d").date()
+        filme['data_final'] = datetime.strptime(filme['data_final'], "%Y-%m-%d").date()
+        filme['horario_inicial'] = datetime.strptime(filme['horario_inicial'], "%H:%M:%S").time()
+        filme['horario_final'] = datetime.strptime(filme['horario_final'], "%H:%M:%S").time()
 
     return dados
 
 
-def load_section(filme, section_id):
-    arquivo = os.path.join(pasta_atual, f'../data/{filme}.json')
-    if not os.path.exists(arquivo):
+# ================================================================
+#                          CARREGAR SESSAO
+# ================================================================
+def load_section(filme, sessao_id):
+    """
+    Carrega os dados de uma sessao especifica de um filme.
+
+    Args:
+        filme_titulo (str): Titulo do filme (nome do arquivo JSON).
+        sessao_id (int): ID da sessao.
+
+    Returns:
+        models.Section | None: objeto Section ou None se nao existir.
+    """
+    caminho_arquivo = os.path.join(pasta_atual, f'../data/{filme}.json')
+    if not os.path.exists(caminho_arquivo):
         print('Nenhum filme encontrado.')
         return None
 
-    with open(arquivo, 'r', encoding='utf-8') as f:
+    with open(caminho_arquivo, 'r', encoding='utf-8') as f:
         conteudo = json.load(f)
 
-    if str(section_id) not in conteudo['sessoes']:
+    if str(sessao_id) not in conteudo['sessoes']:
         return None
     
-    dados = conteudo['sessoes'][str(section_id)]
-    section = models.Section(dados['filme'], dados['section_id'])
+    dados = conteudo['sessoes'][str(sessao_id)]
+    section = models.Section(dados['filme'], dados['sessao_id'])
 
     section.assentos = {
         linha: ['[O]' if cadeira == 0 else 1 for cadeira in colunas]
