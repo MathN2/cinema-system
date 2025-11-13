@@ -35,15 +35,15 @@ def menu_adm():
 
     print("Acessando serviços de Administrador...")
 
-    print("""
+    mensagem = """
             1 - Exibir filmes cadastrados.
             2 - Cadastrar novo filme.
             3 - Remover filme.
             4 - Alterar configuração de filme.
-            5 - Sair.""")
-    opcao = input("")#Validar
+            0 - Sair.\n"""
+    opcao = models.validar_int(0, 4, mensagem)
 
-    if opcao == '1':
+    if opcao == 1:
         # Exibe o titulo dos filmes já cadastrados.
 
         print("") # Apenas para criar um espaçamento
@@ -51,7 +51,7 @@ def menu_adm():
             print(f"{index+1} - {key['titulo']}")
         print("") # Apenas para criar um espaçamento
 
-    elif opcao == '2':
+    elif opcao == 2:
         """
         Cadastra um novo filme e salva no arquivo JSON.
 
@@ -143,7 +143,7 @@ def menu_adm():
         storage.save_new_movies(filme)
 
 
-    elif opcao == '3':
+    elif opcao == 3:
         """
         Apaga um filme cadastrado no arquivo JSON.
         """
@@ -158,7 +158,7 @@ def menu_adm():
         storage.save_movies(lista_filmes)
 
 
-    elif opcao == '4':
+    elif opcao == 4:
         """
         Altera uma propriedade de um filme salvo no arquivo JSON
         """
@@ -176,7 +176,7 @@ def menu_adm():
                 print(f'{index} - {key}')
         
         # Convertendo o index para o nome da propriedade
-        propriedade_selecionada = int(input()) #Validar
+        propriedade_selecionada = models.validar_int(1, len(filme_selecionado))
         for index, (key, valor) in enumerate(filme_selecionado.items()):
             if not key == 'id':
                 print(index, key)
@@ -211,7 +211,7 @@ def menu_adm():
                     print(f"{index+1} - {dia.center(8, ' ')} : {valor}")
                     print("0 - Concluir")
 
-                alternar_dia = input() #Validar
+                alternar_dia = input()
                 if alternar_dia in ('1', '2', '3', '4', '5', '6', '7'):
                     alternar_dia = int(alternar_dia)-1
                     key = list(dias_disponiveis_bool.keys())[alternar_dia]
@@ -257,7 +257,7 @@ def menu_adm():
         storage.save_movies(filme_selecionado)
 
 
-    elif opcao == '5':
+    elif opcao == 0:
         # Volta para o Menu Principal
         print("Voltando para o menu...")
 
@@ -282,7 +282,8 @@ def menu_client():
     for index, item in enumerate(lista_filmes):
         print(f"{index+1} {item['titulo']}")
     
-    opcao = int(input("Escolha o filme que deseja assistir: /n")) #Validar
+    mensagem = "Escolha o filme que deseja assistir: /n"
+    opcao = models.validar_int(1, len(lista_filmes))
 
     filme = models.Filme(**lista_filmes[opcao-1])
 
