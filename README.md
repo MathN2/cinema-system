@@ -40,13 +40,11 @@ Este projeto começou pequeno, mas evoluiu naturalmente para um sistema mais rob
 
 ```yaml
 ├── cinema/
-│ ├── filmes.py # Lógica de filmes
-│ ├── salas.py # Lógica de salas
-│ ├── sessoes.py # Lógica de sessões
+│ ├── models.py # Lógica das classes principais do sistema & Funções auxiliares
 │ ├── menu.py # Menu principal
-│ └── utils.py # Funções auxiliares
+│ ├── storage.py # Gerência dos arquivos JSON
 │
-├── data/
+├── data/ # Parcialmente implementado
 │ ├── filmes.json
 │ ├── salas.json
 │ ├── sessoes.json
