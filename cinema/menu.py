@@ -283,7 +283,7 @@ def menu_client():
         print(f"{index+1} {item['titulo']}")
     
     mensagem = "Escolha o filme que deseja assistir: /n"
-    opcao = models.validar_int(1, len(lista_filmes))
+    opcao = models.validar_int(1, len(lista_filmes, mensagem))
 
     filme = models.Filme(**lista_filmes[opcao-1])
 
