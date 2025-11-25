@@ -47,8 +47,11 @@ def menu_adm():
         # Exibe o titulo dos filmes já cadastrados.
 
         print("") # Apenas para criar um espaçamento
-        for index, key in enumerate(lista_filmes):
-            print(f"{index+1} - {key['titulo']}")
+        if lista_filmes:
+            for index, key in enumerate(lista_filmes):
+                print(f"{index+1} - {key['titulo']}")
+        else:
+            print("Nenhum filme registrado.")
         print("") # Apenas para criar um espaçamento
 
     elif opcao == 2:
@@ -68,21 +71,21 @@ def menu_adm():
             horario_final (time): Horario limite para iniciar uma sessao.
         """ 
         # FILME_ID:
-        filme_id = len(lista_filmes)
+        filme_id = 0 if lista_filmes else len(lista_filmes)
 
         # TITULO:
         titulo = input("Digite o Título do Filme: ")
 
         # DURACAO:
         print("Digite a duração do filme (formato hh:mm): ")
-        duracao = models.converter_tempo() # Converte para datetime.time
+        duracao = models.to_time() # Converte para datetime.time
 
         # SALA:
         sala = input("Digite a(s) sala(s) que o Filme estará disponivel: ")#Validar e Melhorar
 
         # INTERVALO:
         print("Digite o tempo de intervalo do filme (formato hh:mm): ")
-        intervalo = models.converter_tempo() # Converte para datetime.time
+        intervalo = models.to_time() # Converte para datetime.time
 
         # DIAS_DISPONIVEIS:
         
@@ -124,22 +127,22 @@ def menu_adm():
         
         # DATA INICIAL:
         print('Digite a data inicial para o filme (formato yyyy-mm-dd):')
-        data_inicial = models.converter_data()
+        data_inicial = models.to_date()
 
         # DATA FINAL:
         print('Digite a data final para o filme (formato yyyy-mm-dd):')
-        data_final = models.converter_data()
+        data_final = models.to_date()
         
         # HORARIO INICIAL:
         print("Digite o horario da primeira sessão desse filme no dia (formato hh:mm): ")
-        horario_inicial = models.converter_tempo()
+        horario_inicial = models.to_time()
 
         # HORARIO FINAL: 
         print("Digite o horario da ultima sessão desse filme no dia (formato hh:mm): ")
-        horario_final = models.converter_tempo()
+        horario_final = models.to_time()
 
         # Cria Objeto Movie com os dados coletados e salva no arquivo JSON.
-        filme = models.Filme(filme_id, titulo, duracao, sala, intervalo, dias_disponiveis_bool, data_inicial, data_final, horario_inicial, horario_final)
+        filme = models.Movie(filme_id, titulo, duracao, sala, intervalo, dias_disponiveis_bool, data_inicial, data_final, horario_inicial, horario_final)
         storage.save_new_movies(filme)
 
 
@@ -191,7 +194,7 @@ def menu_adm():
         # Alterar Duracao do Filme
         elif propriedade_selecionada == 'duracao':
             print("Digite a nova duração do filme (formato hh:mm): ")
-            filme_selecionado['duracao'] = models.converter_tempo()
+            filme_selecionado['duracao'] = models.to_time()
 
         # Alterar Salas do Filme
         elif propriedade_selecionada == 'sala': # Ainda vou definir o formato das salas
@@ -200,7 +203,7 @@ def menu_adm():
         # Alterar Intervalo entre sessoes do Filme
         elif propriedade_selecionada == 'intervalo':
             print('Digite o novo tempo de intervalo do filme (formato hh:mm): ')
-            filme_selecionado['intervalo'] = models.converter_tempo()
+            filme_selecionado['intervalo'] = models.to_time()
 
         # Interface dos dias da semana disponivel, caso essa seja a alteração do usuario
         elif propriedade_selecionada == 'dias_disponiveis_bool':
@@ -232,22 +235,22 @@ def menu_adm():
         # Alterar data que indica primeiro dia de exibicao do filme
         elif propriedade_selecionada == 'data_inicial':
             print('Digite a nova data inicial para o filme (formato yyyy-mm-dd):')
-            filme_selecionado['data_inicial'] = models.converter_data()
+            filme_selecionado['data_inicial'] = models.to_date()
 
         # Alterar data que indica ultimo dia de exibicao do filme
         elif propriedade_selecionada == 'data_final':
             print('Digite a nova data final para o filme (formato yyyy-mm-dd):')
-            filme_selecionado['data_final'] = models.converter_data()
+            filme_selecionado['data_final'] = models.to_date()
 
         # Alterar horario da primeira exibicao do dia
         elif propriedade_selecionada == 'horario_inicial':
             print("Digite o horario da primeira sessão desse filme no dia (formato hh:mm): ")
-            filme_selecionado['horario_inicial'] = models.converter_tempo()
+            filme_selecionado['horario_inicial'] = models.to_time()
 
         # Alterar horario ultimo possivel para exibicao do dia
         elif propriedade_selecionada == 'horario_final':
             print("Digite o horario da ultima sessão desse filme no dia (formato hh:mm): ")
-            filme_selecionado['horario_final'] = models.converter_tempo()
+            filme_selecionado['horario_final'] = models.to_time()
 
         else:
             new_value = input(f"Digite o novo valor para a propriedade ({propriedade_selecionada}) do filme ({filme_selecionado['titulo']}): ")
