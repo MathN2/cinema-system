@@ -1,48 +1,19 @@
 [
     {
-        "filme_id": 0,
-        "titulo": "Bob Esponja",
-        "duracao": "02:49:00",
+        "filme_id": 2,
+        "titulo": "Doutor Estranho",
+        "duracao": "01:55:00",
         "sala": "1",
-        "intervalo": "00:05:00",
-        "dias_disponiveis": {
-            "segunda": 0,
-            "terca": 1,
-            "quarta": 2,
-            "quinta": 3,
-            "sexta": 4
-        },
-        "data_inicial": "2025-09-01",
-        "data_final": "2025-09-10",
-        "horario_inicial": "12:30:00",
-        "horario_final": "22:30:00"
-    },
-    {
-        "filme_id": 1,
-        "titulo": "Avengers",
-        "duracao": "02:49:00",
-        "sala": "1",
-        "intervalo": "00:05:00",
-        "dias_disponiveis": {
-            "domingo": false,
+        "intervalo": "00:15:00",
+        "dias_disponiveis_bool": {
             "segunda": true,
             "terca": true,
             "quarta": true,
             "quinta": true,
             "sexta": true,
-            "sabado": false
+            "sabado": true,
+            "domingo": true
         },
-        "data_inicial": "2014-11-05",
-        "data_final": "2014-12-05",
-        "horario_inicial": "10:00:00",
-        "horario_final": "23:00:00"
-    },
-    {
-        "filme_id": 2,
-        "titulo": "Interstellar",
-        "duracao": "02:49:00",
-        "sala": "1",
-        "intervalo": "00:05:00",
         "dias_disponiveis": {
             "segunda": 0,
             "terca": 1,
@@ -52,9 +23,9 @@
             "sabado": 5,
             "domingo": 6
         },
-        "data_inicial": "2014-11-05",
-        "data_final": "2014-12-05",
-        "horario_inicial": "10:00:00",
-        "horario_final": "23:00:00"
+        "data_inicial": "2016-11-04",
+        "data_final": "2017-02-02",
+        "horario_inicial": "12:00:00",
+        "horario_final": "22:00:00"
     }
 ]
