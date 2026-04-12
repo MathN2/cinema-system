@@ -1,0 +1,70 @@
+from cinema.data import storage
+from datetime import datetime, date
+
+def get_section_by_date_hour(filme):
+    sessoes = storage.load_sections(filme.titulo)
+    datas = set()
+    datas_formatadas = []
+    horarios = set()
+    datas_dict = {}
+
+    if sessoes:
+        for sessao in sessoes['sessoes'].values():
+            data_hora = sessao["data_hora"]
+            data, hora = data_hora.split('_')
+
+
+            if data not in datas_dict:
+                datas_dict[data] = []
+
+            datas_dict[data].append(hora)
+            
+            datas.add(data)
+            horarios.add(hora)
+    
+    datas_ordenadas = sorted(
+        datas_dict.keys(),
+        key=lambda d: datetime.strptime(d, '%Y-%m-%d'))
+ 
+
+    for data in datas_ordenadas:
+        data_obj = datetime.strptime(data, '%Y-%m-%d')
+        hoje = date.today()
+
+        data_formatada = data_obj.strftime('%d/%m')
+        dia_semana = data_obj.strftime('%A')
+
+        dias = {
+            "Monday": "Segunda",
+            "Tuesday": "Terça",
+            "Wednesday": "Quarta",
+            "Thursday": "Quinta",
+            "Friday": "Sexta",
+            "Saturday": "Sábado",
+            "Sunday": "Domingo"
+        }
+
+        dia_br = dias[dia_semana]        
+
+        if data_obj.date() == hoje:
+            texto = f"Hoje ({data_formatada} - {dia_br})"
+        else:
+            texto = f"{data_formatada} ({dia_br})"
+
+        datas_formatadas.append({
+            "data": data,
+            "horarios": sorted(datas_dict[data]),
+            "label": texto
+        })
+
+    return datas_formatadas
+
+def get_section(filme, data_hora):
+    sessoes = storage.load_sections(filme.titulo)
+
+    if sessoes:
+        for sessao in sessoes['sessoes'].values():
+            if sessao.get('data_hora') == data_hora:
+                return sessao
+            
+    return None

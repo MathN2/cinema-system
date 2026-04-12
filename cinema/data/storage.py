@@ -208,3 +208,19 @@ def load_section(filme, sessao_id):
     }
 
     return section
+
+
+# ================================================================
+#                        CARREGAR SESSOES
+# ================================================================
+
+def load_sections(filme):
+    caminho_arquivo = os.path.join(pasta_atual, f'data/{filme}.json')
+    if not os.path.exists(caminho_arquivo):
+        print('Nenhum filme encontrado.')
+        return None
+    
+    with open(caminho_arquivo, 'r', encoding='utf-8') as f:
+        conteudo = json.load(f)
+
+    return conteudo

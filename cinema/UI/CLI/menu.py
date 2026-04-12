@@ -12,6 +12,7 @@
 
 
 from cinema.UI.CLI.menu_adm import menu_adm
+from cinema.UI.CLI.menu_cliente import menu_client
 
 # ================================================================
 #                       MENU PRINCIPAL
@@ -32,5 +33,5 @@ def menu_principal():
         if adm == True:
             menu_adm()
             
-        # else:
-        #     CLI.cliente.menu_client()
+        else:
+            menu_client()

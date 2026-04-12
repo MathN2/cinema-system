@@ -32,6 +32,22 @@ class Section():
     def novo_id(cls):
         cls._num_id += 1    
         return cls._num_id
+    
+
+    @classmethod
+    def from_dict(cls, dados):
+        obj = cls.__new__(cls)  # cria sem chamar __init__
+
+        obj.titulo = dados['filme']
+        obj.sessao_id = dados['sessao_id']
+        obj.data_hora = dados['data_hora']
+        
+        obj.assentos = {
+            linha: ['[O]' if cadeira == 0 else '[X]' for cadeira in colunas]
+            for linha, colunas in dados['assentos'].items()
+        }
+
+        return obj
 # ----------------------------------------------------------------
 #                         Exibir Assentos
 # ----------------------------------------------------------------
@@ -39,9 +55,18 @@ class Section():
         """
         Exibe o mapa de assentos da sessao no console.
         """
-        print('   1  2  3  4  5')
+        print("=" * 40)
+        print(f"Filme: {self.titulo}")
+        print(f"Sessão: {self.sessao_id}")
+        print("=" * 40)
+
+        print("\nMAPA DE ASSENTOS")
+        print("   " + "  ".join(str(i) for i in range(1, 6)))
+
         for linha, lugares in self.assentos.items():
             print(f'{linha} {"".join(lugares)}')
+
+        print("\n[O] Disponível | [X] Ocupado\n")
 
 # ----------------------------------------------------------------
 #                         Reservar Assentos
@@ -69,7 +94,7 @@ class Section():
 
         while n < num_reservas:
             # Cordenadas do assento, sendo (x) a fileira[A B C D E] e (y) a coluna
-            cordenadas = input('Digite o assento que deseja reservar: ').upper().replace(" ", "")
+            cordenadas = input("Digite o assento (ex: A1): ").upper().replace(" ", "")
             if len(cordenadas) < 2:
                 print('Valor Invalido. Use o formato A1, B2, C3, etc.')
                 continue
@@ -98,5 +123,6 @@ class Section():
                         print('Valor Invalido.')
 
             self.assentos[x][y] = '[X]'
+            print("\nAssento(s) reservado(s) com sucesso!\n")
             
             n += 1

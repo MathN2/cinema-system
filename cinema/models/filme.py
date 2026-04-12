@@ -8,7 +8,7 @@ class Movie:
     """
     _num_id = 0
 
-    def __init__(self, titulo, duracao, sala, intervalo, dias_disponiveis, data_inicial, data_final, horario_inicial, horario_final, filme_id = None):
+    def __init__(self, titulo, duracao, sala, intervalo, dias_disponiveis_bool, data_inicial, data_final, horario_inicial, horario_final, filme_id = None, dias_disponiveis=None):
         # Validar horarios. duracao >= horario_inicial - horario_final
         """
         Inicializa um filme com suas informacoes e horarios disponiveis
@@ -30,12 +30,17 @@ class Movie:
         else:
             self.filme_id = self.novo_id()
 
+        if dias_disponiveis is not None:
+            self.dias_disponiveis = dias_disponiveis
+        else:
+            self.dias_disponiveis = self._map_available_days()
+
         self.filme_id = self.novo_id()
         self.titulo = titulo
         self.duracao = duracao # Formato hh:mm:ss
         self.sala = sala
         self.intervalo = intervalo # Formato hh:mm:ss
-        self.dias_disponiveis_bool = dias_disponiveis # SEMANAL
+        self.dias_disponiveis_bool = dias_disponiveis_bool # SEMANAL
         self.data_inicial = data_inicial
         self.data_final = data_final
         self.horario_inicial = horario_inicial
