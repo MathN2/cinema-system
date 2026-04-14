@@ -10,7 +10,7 @@
 import os
 import json
 from datetime import datetime, date, time
-from cinema.models import filme as fm, sessao
+from cinema.models import filme as fm, sessao, sala
 
 # Caminho base do diretorio atual (para construir caminhos relativos)
 pasta_atual = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
@@ -125,11 +125,6 @@ def load_movies():
     
     for filme in dados:
         filme['duracao'] = datetime.strptime(filme['duracao'], "%H:%M:%S").time()
-        filme['intervalo'] = datetime.strptime(filme['intervalo'], "%H:%M:%S").time()
-        filme['data_inicial'] = datetime.strptime(filme['data_inicial'], "%Y-%m-%d").date()
-        filme['data_final'] = datetime.strptime(filme['data_final'], "%Y-%m-%d").date()
-        filme['horario_inicial'] = datetime.strptime(filme['horario_inicial'], "%H:%M:%S").time()
-        filme['horario_final'] = datetime.strptime(filme['horario_final'], "%H:%M:%S").time()
 
     return dados
 
@@ -151,14 +146,15 @@ def save_section(sessao: sessao.Section):
     
     # Converte assentos para formato numerico (0 = disponivel, 1 = ocupado)
     assentos = {
-        linha: [0 if cadeira == '[O]' else 1 for cadeira in colunas]
+        linha: [1 if cadeira else 0 for cadeira in colunas]
         for linha, colunas in sessao.assentos.items()
     }
 
     dados_sessao = {
-        "filme": sessao.titulo,
         "sessao_id": sessao.sessao_id,
-        "data_hora": sessao.data_hora,
+        "sala_id": sessao.sala_id,
+        "filme": sessao.titulo,
+        "data_hora": sessao.data_hora.strftime("%Y-%m-%d_%H:%M"),
         "assentos": assentos
     }
     
@@ -200,7 +196,7 @@ def load_section(filme, sessao_id):
         return None
     
     dados = conteudo['sessoes'][str(sessao_id)]
-    section = sessao.Section(dados['filme'], dados['sessao_id'])
+    section = sessao.Section(dados['filme'], dados['sala_id'], dados['sessao_id'])
 
     section.assentos = {
         linha: ['[O]' if cadeira == 0 else '[X]' for cadeira in colunas]
@@ -224,3 +220,46 @@ def load_sections(filme):
         conteudo = json.load(f)
 
     return conteudo
+
+
+# ================================================================
+#                         SALVAR SALA
+# ================================================================
+def save_room(sala: sala.Room):
+    caminho_arquivo = os.path.join(pasta_atual, f'data/salas.json')
+
+    os.makedirs(os.path.dirname(caminho_arquivo), exist_ok=True)
+
+    salas = load_rooms()
+    salas.append(sala.to_dict())
+
+    with open(caminho_arquivo, 'w', encoding='utf-8') as f:
+        json.dump(salas, f, indent=4, ensure_ascii=False)
+
+
+# ================================================================
+#                         SALVAR SALAS
+# ================================================================
+def save_rooms(salas):
+    caminho_arquivo = os.path.join(pasta_atual, f'data/salas.json')
+
+    os.makedirs(os.path.dirname(caminho_arquivo), exist_ok=True)
+
+    with open(caminho_arquivo, "w", encoding="utf-8") as f:
+        json.dump(salas, f, indent=4, ensure_ascii=False)
+
+
+# ================================================================
+#                        CARREGAR SALAS
+# ================================================================
+def load_rooms():
+    caminho_arquivo = os.path.join(pasta_atual, f'data/salas.json')
+
+    if not os.path.exists(caminho_arquivo):
+        return []
+    
+    with open(caminho_arquivo, 'r', encoding='utf-8') as f:
+        try:
+            return json.load(f)
+        except json.JSONDecodeError:
+            return []

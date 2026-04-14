@@ -27,5 +27,52 @@
         "data_final": "2017-02-02",
         "horario_inicial": "12:00:00",
         "horario_final": "22:00:00"
+    },
+    {
+        "filme_id": 1,
+        "titulo": "Oppenheimer",
+        "duracao": "03:00:00",
+        "sala": "1",
+        "intervalo": "00:15:00",
+        "dias_disponiveis_bool": {
+            "segunda": true,
+            "terca": true,
+            "quarta": true,
+            "quinta": true,
+            "sexta": true,
+            "sabado": true,
+            "domingo": true
+        },
+        "dias_disponiveis": {
+            "segunda": 0,
+            "terca": 1,
+            "quarta": 2,
+            "quinta": 3,
+            "sexta": 4,
+            "sabado": 5,
+            "domingo": 6
+        },
+        "data_inicial": "2023-07-20",
+        "data_final": "2023-08-10",
+        "horario_inicial": "13:20:00",
+        "horario_final": "23:59:00"
+    },
+    {
+        "filme_id": 1,
+        "titulo": "Teste",
+        "duracao": "02:00:00",
+        "dias_disponiveis_bool": {
+            "segunda": false,
+            "terca": false,
+            "quarta": false,
+            "quinta": false,
+            "sexta": false,
+            "sabado": true,
+            "domingo": true
+        },
+        "dias_disponiveis": {
+            "sabado": 5,
+            "domingo": 6
+        }
     }
 ]

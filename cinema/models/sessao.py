@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta, date
+from cinema.models import sala, filme
 # ================================================================
 #                           SECTION
 # ================================================================
@@ -8,7 +9,7 @@ class Section():
     """
     _num_id = 0
 
-    def __init__(self, titulo, data_hora):
+    def __init__(self, filme: filme.Movie, sala: sala.Room, data_hora):
         """
         Inicializa uma nova sessao.
 
@@ -17,15 +18,11 @@ class Section():
             section_id: Identificador Unico da sessao.
         """
         self.sessao_id = self.novo_id()
-        self.titulo = titulo
+        self.sala_id = sala.id
+        self.titulo = filme.titulo
         self.data_hora = data_hora
-        self.assentos = {
-            'A': ['[O]'] * 5,
-            'B': ['[O]'] * 5,
-            'C': ['[O]'] * 5,
-            'D': ['[O]'] * 5,
-            'E': ['[O]'] * 5,
-        }
+        self.sala = sala
+        self.assentos = sala.create_map_seat()
 
 
     @classmethod
@@ -60,11 +57,7 @@ class Section():
         print(f"Sessão: {self.sessao_id}")
         print("=" * 40)
 
-        print("\nMAPA DE ASSENTOS")
-        print("   " + "  ".join(str(i) for i in range(1, 6)))
-
-        for linha, lugares in self.assentos.items():
-            print(f'{linha} {"".join(lugares)}')
+        self.sala.show_seats(self.assentos)
 
         print("\n[O] Disponível | [X] Ocupado\n")
 

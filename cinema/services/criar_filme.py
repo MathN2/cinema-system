@@ -6,13 +6,7 @@ def create_movie(dados):
 
     titulo = dados['titulo']
     duracao = dados['duracao']
-    sala = dados['sala']
-    intervalo = dados['intervalo']
-    dias_disponiveis = dados['dias_disponiveis']
-    data_inicial = dados['data_inicial']
-    data_final = dados['data_final']
-    horario_inicial = dados['horario_inicial']
-    horario_final = dados['horario_final']
+    dias_disponiveis_bool = dados['dias_disponiveis']
 
-    filme = fm.Movie(titulo, duracao, sala, intervalo, dias_disponiveis, data_inicial, data_final, horario_inicial, horario_final)
+    filme = fm.Movie(titulo, duracao, dias_disponiveis_bool)
     return filme

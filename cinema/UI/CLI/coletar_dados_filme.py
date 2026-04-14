@@ -19,19 +19,11 @@ Requirements:
 lista_filmes = storage.load_movies()
 
 def get_movie_data():
-    data_inicial, data_final = ask_dates()
-    horario_inicial, horario_final = ask_schedule()
-
     return {
         'titulo': ask_title(),
         'duracao': ask_duration(),
-        'sala': ask_room(),
-        'intervalo': ask_break(),
         'dias_disponiveis': ask_weekdays(),
-        'data_inicial': data_inicial,
-        'data_final': data_final,
-        'horario_inicial': horario_inicial,
-        'horario_final': horario_final
+
     }
 
 
@@ -45,15 +37,6 @@ def ask_title():
 # DURACAO:
 def ask_duration():
     print("Digite a duração do filme (formato hh:mm): ")
-    return utils.to_time() # Converte para datetime.time
-
-# SALA:
-def ask_room():
-    return input("Digite a(s) sala(s) que o Filme estará disponivel: ")#Validar e Melhorar
-
-# INTERVALO:
-def ask_break():
-    print("Digite o tempo de intervalo do filme (formato hh:mm): ")
     return utils.to_time() # Converte para datetime.time
 
 # DIAS_DISPONIVEIS:
@@ -90,27 +73,3 @@ def ask_weekdays():
         else:
             print('Valor invalido.')
             continue
-
-# DATAS
-def ask_dates():
-# DATA INICIAL:
-    print('Digite a data inicial para o filme (formato yyyy-mm-dd):')
-    data_inicial = utils.to_date()
-
-    # DATA FINAL:
-    print('Digite a data final para o filme (formato yyyy-mm-dd):')
-    data_final = utils.to_date()
-
-    return data_inicial, data_final
-
-# HORARIOS
-def ask_schedule():
-    # HORARIO INICIAL:
-    print("Digite o horario da primeira sessão desse filme no dia (formato hh:mm): ")
-    horario_inicial = utils.to_time()
-
-    # HORARIO FINAL: 
-    print("Digite o horario da ultima sessão desse filme no dia (formato hh:mm): ")
-    horario_final = utils.to_time()
-
-    return horario_inicial, horario_final

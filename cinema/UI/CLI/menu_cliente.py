@@ -21,12 +21,15 @@ def menu_client():
         if lista_filmes:
             print("Filmes em cartaz:")
             for index, item in enumerate(lista_filmes):
-                print(f"{index+1} {item['titulo']}")
+                print(f"{index+1} - {item['titulo']}")
         
             mensagem = "Escolha o filme que deseja assistir: "
             opcao = utils.validar_int(1, len(lista_filmes), mensagem)
 
             filme = fm.Movie(**lista_filmes[opcao-1])
+
+            # Divisoria
+            print("\n" + "-" * 40 + "\n")
 
             datas = sessao_services.get_section_by_date_hour(filme)
 
@@ -35,6 +38,9 @@ def menu_client():
 
             if data_escolhida is None:
                 continue
+
+            # Divisoria
+            print("\n" + "-" * 40 + "\n")
             
             print("Escolha um horario: ")
             horarios = data_escolhida['horarios']
@@ -43,6 +49,7 @@ def menu_client():
                 )
             if horario_escolhido is None:
                 continue
+ 
 
             data_hora = f"{data_escolhida['data']}_{horario_escolhido['label']}"
             dados_sessao = sessao_services.get_section(filme, data_hora)
@@ -56,3 +63,6 @@ def menu_client():
             sessao_obj.assign_seat()
             sessao_obj.show_seats()
             storage.save_section(sessao_obj)
+
+            # Divisoria
+            print("\n" + "-" * 40 + "\n")
