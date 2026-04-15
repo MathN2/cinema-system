@@ -3,30 +3,21 @@
 # ================================================================
 
 class Room:
-    _num_id = 0  # contador da classe
-
     def __init__(self, numero, linhas = 5, colunas = 5, sala_id = None):
-        if sala_id is not None:
-            self.id = sala_id
-        else:
-            self.id = self.novo_id()
-
+        self.id = sala_id
         self.numero = numero
         self.linhas = linhas
         self.colunas = colunas
         self.capacidade = self.capacity()
 
-    @classmethod
-    def novo_id(cls):
-        cls._num_id += 1    
-        return cls._num_id
-    
+
     @classmethod
     def from_dict(cls, data):
         return cls(
             numero=data['numero'],
             linhas=data['linhas'],
-            colunas=data['colunas']
+            colunas=data['colunas'],
+            sala_id=data['id']
         )
     
 # ----------------------------------------------------------------

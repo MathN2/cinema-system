@@ -1,6 +1,6 @@
 from cinema.services import utils, criar_sala, excluir_sala
-from cinema.UI.CLI import coletar_dados_sala
-from cinema.data import storage
+from cinema.UI.CLI import coletar_dados_sala, menu_filmes
+from cinema.data import saving_db, loading_db
 
 def menu_salas():
     print("=" * 50)
@@ -32,8 +32,10 @@ def menu_salas():
             if sala is None:
                 print("Essa sala já existe.\nTente outro número para a sala.")
                 continue
+            
+            sala_id = saving_db.save_room_db(sala)
+            sala.id = sala_id
 
-            storage.save_room(sala)
             print("Sala criada com sucesso.")
             print('-' * 50)
         
@@ -49,7 +51,7 @@ def menu_salas():
 
 
         if opcao == 3:
-            salas = storage.load_rooms()
+            salas = loading_db.load_rooms()
 
             if not salas:
                 print("Nenhuma sala cadastrada.")
@@ -64,7 +66,8 @@ def menu_salas():
             mensagem = "Escolha o número da sala a ser excluida: "
             escolha = utils.validar_int(1, len(salas), mensagem)
 
-            sala_id = salas[escolha - 1]['sala_id']
+            print(salas)
+            sala_id = salas[escolha - 1]['id']
             resultado = excluir_sala.delete_room(sala_id)
 
             if resultado == "used":
@@ -85,9 +88,36 @@ def menu_salas():
 
 
 def _list_rooms():
-    salas = storage.load_rooms()
+    salas = loading_db.load_rooms()
 
     for index, sala in enumerate(salas):
-        print(f'{index + 1} - sala {sala['numero']}')
+        label = get_room_label(sala)
+        
+        print(f'{index + 1} - sala {sala['numero']} ({label})')
     
     print('-' * 50)
+
+
+def get_room_label(sala):
+    if is_room_occupied(sala["id"]):
+        return "🔴 OCUPADA"
+    return "🟢 DISPONÍVEL"
+
+
+def is_room_occupied(sala_id):
+    filmes = loading_db.load_movies()
+
+    if not filmes:
+        return False
+
+    for filme in filmes:
+        sessoes = loading_db.load_sections(filme.get('id'))
+
+        if not sessoes:
+            continue
+        
+        for sessao in sessoes:
+            if sessao.get('sala_id') == sala_id:
+                return True
+
+    return False

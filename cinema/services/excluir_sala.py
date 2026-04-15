@@ -1,17 +1,24 @@
-from cinema.data.storage import load_movies, load_sections, load_rooms, save_rooms
+from cinema.data.loading_db import load_movies, load_sections
+from cinema.data.db import get_connection
+
 
 def delete_room(sala_id):
     if room_in_use(sala_id):
         return "used"
-    
-    salas = load_rooms()
 
-    novas_salas = [s for s in salas if s['sala_id'] != sala_id]
+    conn = get_connection()
+    cursor = conn.cursor()
 
-    if len(novas_salas) == len(salas):
+    cursor.execute("SELECT id FROM salas WHERE id = %s", (sala_id,))
+    sala = cursor.fetchone()
+
+    if sala is None:
+        conn.close()
         return "notfound"
 
-    save_rooms(novas_salas)
+    cursor.execute("DELETE FROM salas WHERE id = %s", (sala_id,))
+    conn.commit()
+    conn.close()
     return "ok"
     
 
@@ -28,7 +35,7 @@ def room_in_use(sala_id):
         if not sessoes:
             continue
         
-        for sessao in sessoes['sessoes'].values():
+        for sessao in sessoes:
             if sessao.get('sala_id') == sala_id:
                 return True
     

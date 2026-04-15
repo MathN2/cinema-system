@@ -1,4 +1,3 @@
-from datetime import datetime, timedelta, date
 # ================================================================
 #                           FILME
 # ================================================================
@@ -26,11 +25,11 @@ class Movie:
             horario_final (time): Horario limite para iniciar uma sessao.
         """
 
-        if filme_id is not None:
-            self.filme_id = filme_id
-        else:
-            self.filme_id = self.novo_id()
-
+        # if filme_id is not None:
+        #     self.filme_id = filme_id
+        # else:
+        #     self.filme_id = self.novo_id()
+        self.id = filme_id
         self.titulo = titulo
         self.duracao = duracao # Formato hh:mm:ss
         self.dias_disponiveis_bool = dias_disponiveis_bool # SEMANAL
@@ -59,7 +58,7 @@ class Movie:
         Return:
             Dicionario
         """
-        return {'filme_id': self.filme_id,
+        return {'filme_id': self.id,
             'titulo': self.titulo,
             'duracao': self.duracao.strftime("%H:%M:%S"),
             'dias_disponiveis_bool': self.dias_disponiveis_bool,

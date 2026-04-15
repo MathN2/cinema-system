@@ -1,7 +1,7 @@
 from cinema.UI.CLI import paginacao
 from cinema.services import utils, criar_sessao, sessao_services
 from cinema.models import filme as fm, sessao
-from cinema.data import storage
+from cinema.data import loading_db, saving_db
 
 # ================================================================
 #                     MENU PARA O CLIENTE
@@ -17,7 +17,7 @@ def menu_client():
         print('BEM-VINDO'.center(50, ' '))
         print('*' * 50)
 
-        lista_filmes = storage.load_movies()
+        lista_filmes = loading_db.load_movies()
         if lista_filmes:
             print("Filmes em cartaz:")
             for index, item in enumerate(lista_filmes):
@@ -62,7 +62,7 @@ def menu_client():
             sessao_obj.show_seats()
             sessao_obj.assign_seat()
             sessao_obj.show_seats()
-            storage.save_section(sessao_obj)
+            saving_db.save_section_db(sessao_obj)
 
             # Divisoria
             print("\n" + "-" * 40 + "\n")

@@ -1,17 +1,16 @@
+from cinema.data.db import get_connection
 """
 Apaga um filme cadastrado no arquivo JSON.
 """
-import cinema.data.storage as storage
-import cinema.services.criar_filme as criar_filme
-lista_filmes = storage.load_movies()
 
-def delete_movie(nome_filme):
-    if lista_filmes is None:
-        return None
+def delete_movie(filme_id):
+    conn = get_connection()
+    cursor = conn.cursor()
 
-    for index, key in enumerate(lista_filmes):
-        if key["titulo"].lower() == nome_filme.lower():
-            print(key['titulo'], nome_filme)
-            del lista_filmes[index]
-            break
-    return lista_filmes
+    cursor.execute("""
+        DELETE FROM filmes
+        WHERE titulo = %s
+    """, (filme_id,))
+
+    conn.commit()
+    conn.close()

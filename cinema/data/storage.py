@@ -151,7 +151,7 @@ def save_section(sessao: sessao.Section):
     }
 
     dados_sessao = {
-        "sessao_id": sessao.sessao_id,
+        "sessao_id": sessao.id,
         "sala_id": sessao.sala_id,
         "filme": sessao.titulo,
         "data_hora": sessao.data_hora.strftime("%Y-%m-%d_%H:%M"),
@@ -164,7 +164,7 @@ def save_section(sessao: sessao.Section):
     else:
         conteudo = {'sessoes': {}}
 
-    conteudo['sessoes'][str(sessao.sessao_id)] = dados_sessao
+    conteudo['sessoes'][str(sessao.id)] = dados_sessao
 
     with open(caminho_arquivo, 'w', encoding='utf-8') as f:
         json.dump(conteudo, f, indent=4, ensure_ascii=False)

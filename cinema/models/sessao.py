@@ -1,4 +1,3 @@
-from datetime import datetime, timedelta, date
 from cinema.models import sala, filme
 # ================================================================
 #                           SECTION
@@ -9,7 +8,7 @@ class Section():
     """
     _num_id = 0
 
-    def __init__(self, filme: filme.Movie, sala: sala.Room, data_hora):
+    def __init__(self, filme: filme.Movie, sala: sala.Room, data_hora, sessao_id = None):
         """
         Inicializa uma nova sessao.
 
@@ -17,7 +16,8 @@ class Section():
             filme: Objeto Movie contendo informacoes do filme
             section_id: Identificador Unico da sessao.
         """
-        self.sessao_id = self.novo_id()
+        self.id = sessao_id
+        self.filme_id= filme.id
         self.sala_id = sala.id
         self.titulo = filme.titulo
         self.data_hora = data_hora
@@ -26,17 +26,11 @@ class Section():
 
 
     @classmethod
-    def novo_id(cls):
-        cls._num_id += 1    
-        return cls._num_id
-    
-
-    @classmethod
     def from_dict(cls, dados):
         obj = cls.__new__(cls)  # cria sem chamar __init__
 
         obj.titulo = dados['filme']
-        obj.sessao_id = dados['sessao_id']
+        obj.id = dados['sessao_id']
         obj.data_hora = dados['data_hora']
         
         obj.assentos = {
@@ -54,7 +48,7 @@ class Section():
         """
         print("=" * 40)
         print(f"Filme: {self.titulo}")
-        print(f"Sessão: {self.sessao_id}")
+        print(f"Sessão: {self.id}")
         print("=" * 40)
 
         self.sala.show_seats(self.assentos)

@@ -1,5 +1,5 @@
 from cinema.services import utils
-from cinema.data import storage
+from cinema.data import loading_db
 """
 Cadastra um novo filme e salva no arquivo JSON.
 
@@ -16,7 +16,7 @@ Requirements:
     horario_final (time): Horario limite para iniciar uma sessao.
 """ 
 
-lista_filmes = storage.load_movies()
+lista_filmes = loading_db.load_movies()
 
 def get_movie_data():
     return {

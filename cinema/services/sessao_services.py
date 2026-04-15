@@ -1,17 +1,17 @@
-from cinema.data import storage
+from cinema.data import loading_db
 from datetime import datetime, date
 
 def get_section_by_date_hour(filme):
-    sessoes = storage.load_sections(filme.titulo)
+    sessoes = loading_db.load_sections(filme.titulo)
     datas = set()
     datas_formatadas = []
     horarios = set()
     datas_dict = {}
 
     if sessoes:
-        for sessao in sessoes['sessoes'].values():
+        for sessao in sessoes:
             data_hora = sessao["data_hora"]
-            data, hora = data_hora.split('_')
+            data, hora = str(data_hora).split('_')
 
 
             if data not in datas_dict:
@@ -60,10 +60,10 @@ def get_section_by_date_hour(filme):
     return datas_formatadas
 
 def get_section(filme, data_hora):
-    sessoes = storage.load_sections(filme.titulo)
+    sessoes = loading_db.load_sections(filme.titulo)
 
     if sessoes:
-        for sessao in sessoes['sessoes'].values():
+        for sessao in sessoes:
             if sessao.get('data_hora') == data_hora:
                 return sessao
             

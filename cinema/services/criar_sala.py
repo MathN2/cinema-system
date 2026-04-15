@@ -1,9 +1,9 @@
 from cinema.models.sala import Room
-from cinema.data.storage import load_rooms
+from cinema.data import loading_db
 
 def create_room(dados):
     # Definir valores
-    salas = load_rooms()
+    salas = loading_db.load_rooms()
 
     numero = dados['numero']
     linhas = dados['linhas']

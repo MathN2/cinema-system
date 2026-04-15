@@ -1,9 +1,25 @@
+from cinema.data.db import get_connection
+from cinema.services import utils
+import cinema.UI.CLI.coletar_dados_filme as cdf
 """
 Altera uma propriedade de um filme salvo no arquivo JSON
 """
-import cinema.data.storage as storage
-from cinema.services import utils
-import cinema.UI.CLI.coletar_dados_filme as cdf
+
+def update_movie(filme, campo, valor):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    filme_id = filme['id']
+
+    query = f"""
+        UPDATE filmes
+        SET {campo} = %s
+        WHERE id = %s
+    """
+    cursor.execute(query, (valor, filme_id))
+        
+    conn.commit()
+    conn.close()
 
 
 def get_movie(lista_filmes):
@@ -21,7 +37,7 @@ def get_movie(lista_filmes):
 def get_movieattr(filme_selecionado):
     print("Escolha a propriedade que deseja alterar:")
     for index, key in enumerate(filme_selecionado):
-        if not key == 'filme_id':
+        if not key == 'id':
             print(f'{index} - {key}')
 
     # Convertendo o index para o nome da propriedade
@@ -54,15 +70,3 @@ def get_value(campo):
 
     else:
         return input("Digite o novo valor: ")
-
-
-def update_movie(filme, campo, valor):
-    filme[campo] = valor
-
-    if campo == 'dias_disponiveis':
-        from cinema.models.filme import Movie
-
-        novo_filme = Movie(**filme)
-        return novo_filme
-        
-    return filme

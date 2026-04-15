@@ -1,6 +1,5 @@
 # Cria Objeto Movie com os dados coletados e salva no arquivo JSON.
-from cinema.data import storage
-from cinema.models import filme as fm, sessao
+from cinema.models import filme as fm
 
 def create_movie(dados):
 
