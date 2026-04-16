@@ -13,6 +13,7 @@ Este projeto começou pequeno, mas evoluiu naturalmente para um sistema mais rob
 ✔ Sistema modular estruturado  
 🔄 Evolução da interface CLI em andamento  
 
+---
 
 ## ✨ Funcionalidades
 
@@ -144,6 +145,8 @@ Execute o projeto:
 ```bash
 python main.py
 ```
+
+---
 
 📌 Próximos passos planejados
 
