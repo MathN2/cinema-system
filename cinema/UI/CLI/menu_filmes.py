@@ -79,7 +79,7 @@ def menu_filmes():
             filmes = loading_db.load_movies()
             list_movies()
 
-            mensagem = "Escolha o filme a ser apagado."
+            mensagem = "Escolha o filme a ser apagado.\n"
             filme_num = utils.validar_int(1, len(filmes), mensagem)
 
             filme_id = filmes[filme_num - 1]['id']
@@ -120,7 +120,7 @@ def list_movies():
     
     if lista_filmes:
         for index, key in enumerate(lista_filmes):
-            print(f"{index} - {key['titulo']}")
+            print(f"{index + 1} - {key['titulo']}")
     else:
         print("Nenhum filme registrado.")
         
