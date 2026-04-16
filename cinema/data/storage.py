@@ -1,3 +1,9 @@
+"""
+DEPRECATED:
+Este módulo foi substituido pelo uso de banco de dados (MySQL).
+Mantido temporariamente para possivel uso futuro (backup/export).
+"""
+
 # ⋯⋯⋯⋯ Explicacao ⋯⋯⋯⋯
 #     Modulo responsavel por salvar e carregar os arquivos JSON com informacoes dos filmes e sessoes.
 
