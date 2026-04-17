@@ -1,5 +1,5 @@
-from cinema.services import utils, criar_sala, excluir_sala
-from cinema.UI.CLI import coletar_dados_sala, menu_filmes
+from cinema.services import sala_services
+from cinema.UI.CLI import coletar_dados_sala
 from cinema.data import saving_db, loading_db
 import questionary
 
@@ -31,7 +31,7 @@ def menu_salas():
             print('-' * 50)
 
             dados = coletar_dados_sala.get_room_data()
-            sala = criar_sala.create_room(dados)
+            sala = sala_services.create_room(dados)
 
             if sala is None:
                 print("Essa sala já existe.\nTente outro número para a sala.")
@@ -91,7 +91,7 @@ def menu_salas():
                 continue
 
             sala_id = salas[escolha]['id']
-            resultado = excluir_sala.delete_room(sala_id)
+            resultado = sala_services.delete_room(sala_id)
 
             if resultado == "used":
                 print("Não é possível excluir: existem sessões usando esta sala.")

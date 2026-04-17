@@ -2,7 +2,7 @@ from cinema.services import utils
 from cinema.data import saving_db, loading_db
 import cinema.UI.CLI.coletar_dados_filme as coletar_dados_filme
 import cinema.UI.CLI.menu_salas as menu_salas
-from cinema.services import criar_filme, excluir_filme, atualizar_filme, criar_sessao
+from cinema.services import filme_services, sessao_services
 from cinema.models.sala import Room
 from rich.console import Console
 from rich.table import Table
@@ -55,7 +55,7 @@ def menu_filmes():
 
         if opcao == 1:
             dados = coletar_dados_filme.get_movie_data()
-            filme = criar_filme.create_movie(dados)
+            filme = filme_services.create_movie(dados)
 
 
             salas = ask_room()
@@ -81,7 +81,7 @@ def menu_filmes():
             'duracao': filme.duracao
             }
 
-            sessoes = criar_sessao.create_section(filme, salas, config)
+            sessoes = sessao_services.create_section(filme, salas, config)
 
             for sessao in sessoes:
                 sessao_id = saving_db.save_section_db(sessao)
@@ -121,7 +121,7 @@ def menu_filmes():
             # filme_num = utils.validar_int(1, len(filmes), mensagem)
 
             filme_id = filmes[filme_num]['id']
-            excluir_filme.delete_movie(filme_id)
+            filme_services.delete_movie(filme_id)
 
             # Divisoria
             print("\n" + "-" * 40 + "\n")
@@ -136,11 +136,11 @@ def menu_filmes():
                 console.print("[red]Nenhum filme registrado.[/red]")
                 continue
 
-            filme = atualizar_filme.get_movie(lista_filmes)
-            campo = atualizar_filme.get_movieattr(filme)
-            valor = atualizar_filme.get_value(campo)
+            filme = filme_services.get_movie(lista_filmes)
+            campo = filme_services.get_movieattr(filme)
+            valor = filme_services.get_value(campo)
 
-            atualizar_filme.update_movie(filme, campo, valor)
+            filme_services.update_movie(filme, campo, valor)
 
             # Divisoria
             print("\n" + "-" * 40 + "\n")

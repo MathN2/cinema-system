@@ -1,5 +1,24 @@
-from cinema.data.loading_db import load_movies, load_sections
+from cinema.data.loading_db import load_movies, load_sections, load_rooms
+from cinema.models.sala import Room
 from cinema.data.db import get_connection
+
+
+def create_room(dados):
+    # Definir valores
+    salas = load_rooms()
+
+    numero = dados['numero']
+    linhas = dados['linhas']
+    colunas = dados['colunas']
+
+    # Validaçao
+    for sala in salas:
+        if sala.get('numero') == numero:
+            return None
+        
+    # Chamar sala.Room()
+    sala = Room(numero, linhas, colunas)
+    return sala
 
 
 def delete_room(sala_id):
@@ -39,4 +58,21 @@ def room_in_use(sala_id):
             if sessao.get('sala_id') == sala_id:
                 return True
     
+    return False
+
+
+def room_in_use_logic(sala_id, filmes, secoes_por_filme):
+    if not filmes:
+        return False
+
+    for filme in filmes:
+        sessoes = secoes_por_filme.get(filme.get('id'))
+
+        if not sessoes:
+            continue
+
+        for sessao in sessoes:
+            if sessao.get('sala_id') == sala_id:
+                return True
+
     return False

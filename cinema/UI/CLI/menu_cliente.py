@@ -1,9 +1,8 @@
 from cinema.UI.CLI import paginacao, menu_filmes
-from cinema.services import utils, sessao_services
+from cinema.services import sessao_services
 from cinema.models import filme as fm, sessao
 from cinema.data import loading_db, saving_db
 import questionary
-from rich import table
 
 # ================================================================
 #                     MENU PARA O CLIENTE

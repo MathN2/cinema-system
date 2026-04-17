@@ -1,4 +1,3 @@
-from cinema.services import utils
 from cinema.UI.CLI import menu_filmes, menu_salas
 import questionary
 

@@ -1,6 +1,5 @@
 from cinema.services import utils
 from cinema.data import loading_db
-import json
 import questionary
 """
 Cadastra um novo filme e salva no arquivo JSON.
