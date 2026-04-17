@@ -1,3 +1,7 @@
+from cinema.UI.CLI.menu_adm import menu_adm
+from cinema.UI.CLI.menu_cliente import menu_client
+import questionary
+
 # ⋯⋯⋯⋯ Explicacao ⋯⋯⋯⋯
 #     Interface no terminal para interacao direta com o usuario (Administrador ou Cliente).
 
@@ -11,8 +15,6 @@
 #     (Futuramente) Adicionar interface gráfica []
 
 
-from cinema.UI.CLI.menu_adm import menu_adm
-from cinema.UI.CLI.menu_cliente import menu_client
 
 # ================================================================
 #                       MENU PRINCIPAL
@@ -25,13 +27,22 @@ def menu_principal():
     """
     print("Iniciando Sistema Cinema")
     while True:
-        print('LOGN IN')
-        #Melhorar
-        adm = input('1 - ADMINISTRADOR\n2 - CLIENTE\n')
-        adm = True if adm == '1' else False
+        print('LOGIN')
 
-        if adm == True:
+        choices = [
+            questionary.Choice("Administrador", value="adm"),
+            questionary.Choice("Cliente", value="cli"),
+            questionary.Choice("Sair", value="exit")
+        ]
+
+        escolha = questionary.select(
+            "Como deseja entrar?",
+            choices= choices
+        ).ask()
+
+        if escolha == "adm":
             menu_adm()
-            
-        else:
+        elif escolha == "cli":
             menu_client()
+        else:
+            break

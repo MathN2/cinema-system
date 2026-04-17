@@ -1,3 +1,4 @@
+import json
 # ================================================================
 #                           FILME
 # ================================================================
@@ -7,7 +8,7 @@ class Movie:
     """
     _num_id = 0
 
-    def __init__(self, titulo, duracao, dias_disponiveis_bool, filme_id = None, dias_disponiveis=None):
+    def __init__(self, titulo, duracao, dias_disponiveis_bool, id = None, dias_disponiveis=None):
         # Validar horarios. duracao >= horario_inicial - horario_final
         """
         Inicializa um filme com suas informacoes e horarios disponiveis
@@ -29,7 +30,7 @@ class Movie:
         #     self.filme_id = filme_id
         # else:
         #     self.filme_id = self.novo_id()
-        self.id = filme_id
+        self.id = id
         self.titulo = titulo
         self.duracao = duracao # Formato hh:mm:ss
         self.dias_disponiveis_bool = dias_disponiveis_bool # SEMANAL
@@ -81,6 +82,13 @@ class Movie:
             dias_disponiveis: dicionario com o nome dos dias da semana que o filme sera exibido (key) e sua representação numerica (int)
         """
         dias_disponiveis = {}
+
+        if isinstance(self.dias_disponiveis_bool, str):
+            try:
+                return json.loads(self.dias_disponiveis_bool)
+            except json.JSONDecodeError:
+                return self.dias_disponiveis_bool
+            
         for indice, (dia, valor) in enumerate(self.dias_disponiveis_bool.items()):
             if valor:
                 dias_disponiveis[dia] = indice

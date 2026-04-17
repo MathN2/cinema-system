@@ -1,6 +1,7 @@
 from cinema.services import utils, criar_sala, excluir_sala
 from cinema.UI.CLI import coletar_dados_sala, menu_filmes
 from cinema.data import saving_db, loading_db
+import questionary
 
 def menu_salas():
     print("=" * 50)
@@ -9,14 +10,17 @@ def menu_salas():
 
     while True:
 
-        mensagem = '''
-1 - Criar sala
-2 - Listar salas
-3 - Remover sala
-0 - Sair
-'''
+        choices = [
+            questionary.Choice("Criar sala", value=1),
+            questionary.Choice("Listar salas", value=2),
+            questionary.Choice("Remover sala", value=3),
+            questionary.Choice("Sair", value=0)
+        ]
 
-        opcao = utils.validar_int(0, 3, mensagem)
+        opcao = questionary.select(
+            "Escolha:",
+            choices= choices
+        ).ask()
 
         #================================
         #          Criar Sala
@@ -50,6 +54,9 @@ def menu_salas():
             _list_rooms()
 
 
+        #================================
+        #         Excluir Sala
+        #================================
         if opcao == 3:
             salas = loading_db.load_rooms()
 
@@ -61,13 +68,29 @@ def menu_salas():
             print('Excluir Sala'.center(50))
             print('-' * 50)
 
-            _list_rooms()
+            choices = []
 
-            mensagem = "Escolha o número da sala a ser excluida: "
-            escolha = utils.validar_int(1, len(salas), mensagem)
+            for index, sala in enumerate(salas):
+                label = get_room_label(sala)
+                choices.append(
+                    questionary.Choice(
+                        f'{index + 1} - sala {sala['numero']} ({label})',
+                        value=index
+                    )
+                )
+            
+            choices.append(questionary.Separator())
+            choices.append(questionary.Choice("Cancelar", value=0))
 
-            print(salas)
-            sala_id = salas[escolha - 1]['id']
+            escolha = questionary.select(
+                "Escolha o número da sala a ser excluida:",
+                choices=choices
+            ).ask()
+
+            if escolha == 0:
+                continue
+
+            sala_id = salas[escolha]['id']
             resultado = excluir_sala.delete_room(sala_id)
 
             if resultado == "used":

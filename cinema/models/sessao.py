@@ -1,4 +1,9 @@
 from cinema.models import sala, filme
+import json
+from rich.table import Table
+from rich.console import Console
+
+console = Console()
 # ================================================================
 #                           SECTION
 # ================================================================
@@ -29,31 +34,47 @@ class Section():
     def from_dict(cls, dados):
         obj = cls.__new__(cls)  # cria sem chamar __init__
 
-        obj.titulo = dados['filme']
-        obj.id = dados['sessao_id']
+        obj.filme_id = dados['filme_id']
+        obj.sala_id = dados['sala_id']
+        obj.id = dados['id']
         obj.data_hora = dados['data_hora']
+
+        dados_assentos = json.loads(dados['assentos'])
         
         obj.assentos = {
             linha: ['[O]' if cadeira == 0 else '[X]' for cadeira in colunas]
-            for linha, colunas in dados['assentos'].items()
+            for linha, colunas in dados_assentos.items()
         }
 
         return obj
 # ----------------------------------------------------------------
 #                         Exibir Assentos
 # ----------------------------------------------------------------
-    def show_seats(self):
+    def show_seats(self, filme):
         """
-        Exibe o mapa de assentos da sessao no console.
+        Exibe o mapa de assentos da sessão no console.
         """
-        print("=" * 40)
-        print(f"Filme: {self.titulo}")
-        print(f"Sessão: {self.id}")
-        print("=" * 40)
+        console.print("=" * 40)
+        console.print(f"[bold]Filme:[/bold] {filme.titulo}")
+        console.print(f"[bold]Sessão:[/bold] {self.id}")
+        console.print("=" * 40)
 
-        self.sala.show_seats(self.assentos)
+        if not self.assentos:
+            console.print("[red]Nenhum assento disponível.[/red]")
+            return
 
-        print("\n[O] Disponível | [X] Ocupado\n")
+        table = Table(title="Mapa de Assentos", show_lines=True)
+
+        colunas = len(next(iter(self.assentos.values())))
+
+        print("  " + " ".join(f"{i+1:^3}" for i in range(colunas)))
+
+        for linha, assentos in self.assentos.items():
+            print(f"{linha} " + " ".join(f"{x:^3}" for x in assentos))
+            
+        # console.print(self.assentos)
+
+        console.print("\n[green]O[/green] Disponível | [red]X[/red] Ocupado | [?] Inválido\n")
 
 # ----------------------------------------------------------------
 #                         Reservar Assentos

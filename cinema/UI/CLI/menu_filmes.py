@@ -4,10 +4,15 @@ import cinema.UI.CLI.coletar_dados_filme as coletar_dados_filme
 import cinema.UI.CLI.menu_salas as menu_salas
 from cinema.services import criar_filme, excluir_filme, atualizar_filme, criar_sessao
 from cinema.models.sala import Room
+from rich.console import Console
+from rich.table import Table
+import questionary
 
 # ================================================================
 #                     MENU PARA O ADMINISTRADOR
 # ================================================================
+console = Console()
+
 def menu_filmes():
     """
     Exibe a interface para administradores.
@@ -25,30 +30,47 @@ def menu_filmes():
     print("=" * 50)
     
     while True:
-        mensagem = """
-1 - Cadastrar novo filme.
-2 - Exibir filmes cadastrados.
-3 - Remover filme.
-4 - Alterar configuração de filme.
-0 - Sair.\n"""
-        opcao = utils.validar_int(0, 4, mensagem)
+        choices = [
+            questionary.Choice("Cadastrar novo filme", value=1),
+            questionary.Choice("Exibir filmes cadastrados", value=2),
+            questionary.Choice("Remover filme", value=3),
+            questionary.Choice("Alterar configuração de filme", value=4),
+            questionary.Separator(),
+            questionary.Choice("Sair", value=0)
+        ]
+
+        opcao = questionary.select(
+            "Escolha:",
+            choices=choices
+        ).ask()
+
+#         mensagem = """
+# 1 - Cadastrar novo filme.
+# 2 - Exibir filmes cadastrados.
+# 3 - Remover filme.
+# 4 - Alterar configuração de filme.
+# 0 - Sair.\n"""
+#         opcao = utils.validar_int(0, 4, mensagem)
 
 
         if opcao == 1:
             dados = coletar_dados_filme.get_movie_data()
             filme = criar_filme.create_movie(dados)
 
-            filme_id = saving_db.save_movie_db(filme)
-            filme.id = filme_id
 
             salas = ask_room()
 
             if salas is None:
                 print("Uma sala deve existir para continuar.")
-                break
+                continue
+            if salas == 'canc':
+                continue
 
             data_inicial, data_final = ask_dates()
             horario_inicial, horario_final = ask_schedule()
+
+            filme_id = saving_db.save_movie_db(filme)
+            filme.id = filme_id
 
             config = {
             'data_inicial': data_inicial,
@@ -77,12 +99,28 @@ def menu_filmes():
             Apaga um filme cadastrado no arquivo JSON.
             """
             filmes = loading_db.load_movies()
-            list_movies()
 
-            mensagem = "Escolha o filme a ser apagado.\n"
-            filme_num = utils.validar_int(1, len(filmes), mensagem)
+            choices = []
+            if filmes:
+                for index, filme in enumerate(filmes):
+                    choices.append(
+                        questionary.Choice(
+                            f'({filme['titulo']})',
+                            value = index
+                        )
+                    )
+            mensagem = "Escolha o filme a ser apagado."
+            
+            filme_num = questionary.select(
+                mensagem,
+                choices=choices
+            ).ask()
 
-            filme_id = filmes[filme_num - 1]['id']
+            # list_movies()
+
+            # filme_num = utils.validar_int(1, len(filmes), mensagem)
+
+            filme_id = filmes[filme_num]['id']
             excluir_filme.delete_movie(filme_id)
 
             # Divisoria
@@ -93,6 +131,10 @@ def menu_filmes():
             Altera uma propriedade de um filme salvo no arquivo JSON
             """
             lista_filmes = loading_db.load_movies()
+
+            if not lista_filmes:
+                console.print("[red]Nenhum filme registrado.[/red]")
+                continue
 
             filme = atualizar_filme.get_movie(lista_filmes)
             campo = atualizar_filme.get_movieattr(filme)
@@ -115,16 +157,25 @@ def menu_filmes():
 # Listar Filmes
 def list_movies():
     lista_filmes = loading_db.load_movies()
-
-    print("\n" + "÷" * 40 + "\n")
     
     if lista_filmes:
-        for index, key in enumerate(lista_filmes):
-            print(f"{index + 1} - {key['titulo']}")
-    else:
-        print("Nenhum filme registrado.")
+        table = Table(title="Filmes:")
+
+        table.add_column("Nº", justify="right")
+        table.add_column("Título", justify="left")
+
+
         
-    print("\n" + "÷" * 40 + "\n")
+        for index, filme in enumerate(lista_filmes):
+            table.add_row(
+                str(index + 1),
+                str(filme['titulo'])
+            )
+
+        console.print(table)
+
+    else:
+        console.print("[red]Nenhum filme registrado.[/red]")
 
 
 # SALA:
@@ -137,13 +188,35 @@ def ask_room():
     salas_escolhidas = []
 
     while True:
-        menu_salas._list_rooms()
+        choices = []
+
+        for index, sala in enumerate(salas):
+            label = menu_salas.get_room_label(sala)
+            choices.append(
+                questionary.Choice(
+                    f'{index + 1} - sala {sala['numero']} ({label})',
+                    value=index
+                )
+            )
+
+        choices.append(questionary.Separator())
+        choices.append(questionary.Choice(
+            "Cancelar",
+            value=0
+        ))
+
+
         mensagem = "Digite a(s) sala(s) que o Filme estará disponivel: "
-        mensagem_continuar = "Deseja adicionar outra sala? 1 - Sim | 2 - Não\n"
 
-        escolha_sala = utils.validar_int(1, len(salas), mensagem)
+        escolha_sala = questionary.select(
+            mensagem,
+            choices=choices
+        ).ask()
 
-        sala = Room.from_dict(salas[escolha_sala - 1])
+        if escolha_sala == 0:
+            return 'canc'
+
+        sala = Room.from_dict(salas[escolha_sala])
 
         if menu_salas.is_room_occupied(sala.id):
             print("Sala ocupada. Escolha outra.")
@@ -154,9 +227,11 @@ def ask_room():
         else:
             print("Sala já selecionada.")
 
-        escolha_continuar = utils.validar_int(1, 2, mensagem_continuar)
+        continuar = questionary.confirm(
+            "Deseja adicionar outra sala?"
+        ).ask()
         
-        if escolha_continuar == 2:
+        if not continuar:
             return salas_escolhidas
 
 # INTERVALO:

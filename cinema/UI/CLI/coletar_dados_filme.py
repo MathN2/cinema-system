@@ -1,5 +1,7 @@
 from cinema.services import utils
 from cinema.data import loading_db
+import json
+import questionary
 """
 Cadastra um novo filme e salva no arquivo JSON.
 
@@ -42,34 +44,43 @@ def ask_duration():
 # DIAS_DISPONIVEIS:
 def ask_weekdays():
 
-    # Defini dicionario com os dias da semana.
-    dias_disponiveis_bool = {
-                    'segunda': True,
-                    'terca': True,
-                    'quarta': True,
-                    'quinta': True,
-                    'sexta': True,
-                    'sabado': True,
-                    'domingo': True
-                    }
+    # Defini lista com os dias da semana.
+    dias = [
+        'segunda',
+        'terca',
+        'quarta',
+        'quinta',
+        'sexta',
+        'sabado',
+        'domingo'
+    ]
 
-    print("Escolha os dias da semana que esse filme estará disponivel: ")
     while True:
-        for index, (dia, valor) in enumerate(dias_disponiveis_bool.items()):
-            print(f"{index+1} - {dia.center(8, ' ')} : {valor}")
-        print("0 - Concluir")
 
-        # Possibilita o administrador escolher quais dias o filme estará disponivel (mudando dias_disponiveis_bool entre True e False)
-        alternar_dia = input()
-        if alternar_dia in ('1', '2', '3', '4', '5', '6', '7'):
-            alternar_dia = int(alternar_dia)-1
-            chave = list(dias_disponiveis_bool.keys())[alternar_dia]
-            
-            dias_disponiveis_bool[chave] = not dias_disponiveis_bool[chave]
-        
-        elif alternar_dia == '0':
+        choices = [
+            questionary.Choice(dia, checked=True)
+            for dia in dias
+        ]
+
+        selecionados = questionary.checkbox(
+            "Escolha os dias da semana que esse filme estará disponivel: ",
+            choices=choices
+        ).ask()
+
+        confirmar = questionary.confirm(
+            "Deseja confirmar os dias selecionados?"
+        ).ask()
+
+        # converte para dicionario
+        dias_disponiveis_bool = {
+            dia: dia in selecionados
+            for dia in dias
+        }
+
+        if confirmar:
             return dias_disponiveis_bool
-
+        elif not confirmar:
+            continue
         else:
             print('Valor invalido.')
             continue

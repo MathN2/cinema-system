@@ -30,7 +30,7 @@ def room_in_use(sala_id):
         return False
     
     for filme in filmes:
-        sessoes = load_sections(filme.get('titulo'))
+        sessoes = load_sections(filme.get('id'))
 
         if not sessoes:
             continue

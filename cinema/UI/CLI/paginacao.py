@@ -1,3 +1,5 @@
+import questionary
+
 def pagination(dados):
     tamanho = 7
     pagina = 0
@@ -8,17 +10,28 @@ def pagination(dados):
         max_pagina = (len(dados) - 1) // tamanho
 
         pagina_dados = dados[inicio:fim]
+        choices = []
 
         for i, item in enumerate(pagina_dados, start=1):
-            print(f"{i} - {item['label']}")
+            choices.append(
+                questionary.Choice(
+                    f"{item['label']}",
+                    value = i
+                )
+            )
+        
 
         if fim < len(dados):
-            print("8 - Próxima página")
+            choices.append(questionary.Choice("→ Próxima página", value = 8))
         if pagina > 0:
-            print("9 - Página anterior")
-        print("0 - Cancelar")
+            choices.append(questionary.Choice("← Página anterior", value = 9))
+        choices.append(questionary.Separator())
+        choices.append(questionary.Choice("Cancelar", value = 0))
 
-        opcao = int(input("Escolha: "))
+        opcao = questionary.select(
+            "Escolha um dia para assistir o filme: ",
+            choices = choices
+        ).ask()
 
         if opcao == 8 and pagina < max_pagina:
             pagina += 1

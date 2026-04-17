@@ -1,16 +1,21 @@
 from cinema.services import utils
 from cinema.UI.CLI import menu_filmes, menu_salas
+import questionary
 
 def menu_adm():
     print("Acessando serviços de Administrador...")
 
-    mensagem = '''
-1 - Gerenciar Filmes
-2 - Gerenciar Salas
-0 - Sair
-'''
-    
-    opcao = utils.validar_int(0, 2, mensagem)
+    choices = [
+        questionary.Choice("Gerenciar filmes", value=1),
+        questionary.Choice("Gerenciar salas", value=2),
+        questionary.Choice("Sair", value=0)
+    ]
+
+    opcao = questionary.select(
+        "Escolha:",
+        choices=choices
+    ).ask()
+
 
     if opcao == 1:
         menu_filmes.menu_filmes()

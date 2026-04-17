@@ -51,7 +51,7 @@ class Room:
             letra = chr(65 + i)  # A, B, C...
 
             assentos[letra] = [False] * self.colunas
-
+        print(assentos)
         return assentos
     
     def show_seats(self, assentos):
