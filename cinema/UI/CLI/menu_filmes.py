@@ -84,7 +84,7 @@ def menu_filmes():
             sessoes = sessao_services.create_section(filme, salas, config)
 
             for sessao in sessoes:
-                sessao_id = saving_db.save_section_db(sessao)
+                saving_db.save_section_db(sessao)
 
             # Divisoria
             print("\n" + "-" * 40 + "\n")
@@ -194,7 +194,7 @@ def ask_room():
             label = menu_salas.get_room_label(sala)
             choices.append(
                 questionary.Choice(
-                    f'{index + 1} - sala {sala['numero']} ({label})',
+                    f'sala {sala['numero']} ({label})',
                     value=index
                 )
             )
@@ -202,18 +202,18 @@ def ask_room():
         choices.append(questionary.Separator())
         choices.append(questionary.Choice(
             "Cancelar",
-            value=0
+            value="canc"
         ))
 
 
-        mensagem = "Digite a(s) sala(s) que o Filme estará disponivel: "
+        mensagem = "Escolha a(s) sala(s) que o Filme estará disponivel: "
 
         escolha_sala = questionary.select(
             mensagem,
             choices=choices
         ).ask()
 
-        if escolha_sala == 0:
+        if escolha_sala == "canc":
             return 'canc'
 
         sala = Room.from_dict(salas[escolha_sala])

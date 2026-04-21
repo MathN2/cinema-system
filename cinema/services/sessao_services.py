@@ -137,7 +137,6 @@ def get_section_by_date_hour(filme):
 
 def get_section(filme, data_hora):
     sessoes = loading_db.load_sections(filme.id)
-    # print(sessoes)
     data_hora = datetime.strptime(data_hora, "%Y-%m-%d_%H:%M:%S")
     if sessoes:
         for sessao in sessoes:

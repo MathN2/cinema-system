@@ -1,3 +1,5 @@
+import json
+
 from cinema.UI.CLI import paginacao, menu_filmes
 from cinema.services import sessao_services
 from cinema.models import filme as fm, sessao
@@ -81,10 +83,60 @@ def menu_client():
         sessao_obj = sessao.Section.from_dict(dados_sessao)
 
         sessao_obj.show_seats(filme)
-        sessao_obj.assign_seat()
+
+
+        dados_assentos = sessao_obj.assentos
+
+        for linha, colunas in dados_assentos.items():
+            dados_assentos[linha] = [
+                sessao_obj._normalizar_cadeira(cadeira)
+                for cadeira in colunas
+                ]
+
+        total_assentos = sum(linha.count('[O]') for linha in dados_assentos.values())
+
+        while True:
+            try:
+                num_reservas = int(input('Digite quantos assentos deseja reservar: '))
+
+                if not (1 <= num_reservas <= total_assentos):
+                    print(f'Valor invalido. Tente um numero de 1 - {total_assentos}')
+                    continue
+                break
+                    
+            except ValueError:
+                print(f'Valor invalido. Use um numero inteiro de 1 - {total_assentos}')
+        
+        n = 0
+        while n < num_reservas:
+            # Cordenadas do assento, sendo (x) a fileira[A B C D E] e (y) a coluna
+            cordenadas = input("Digite o assento (ex: A1): ").upper().replace(" ", "")
+            if len(cordenadas) < 2:
+                print('Valor Invalido. Use o formato A1, B2, C3, etc.')
+                continue
+
+            success = sessao_obj.assign_seat(cordenadas)
+            if not success:
+                print('Assento invalido ou ja ocupado.')
+                decision = questionary.select(
+                    "Deseja tentar outro assento?",
+                    choices = [
+                        questionary.Choice("Sim", value=True),
+                        questionary.Choice("Não", value=False)
+                    ]
+                ).ask()
+                if decision:
+                    continue
+                else:
+                    print('Abortando processo de reservas.')
+                    break
+
+            n += 1
+
+
         sessao_obj.show_seats(filme)
 
-        saving_db.save_section_db(sessao_obj)
+        saving_db.update_section_assentos(sessao_obj)
 
         # Divisoria
         print("\n" + "-" * 40 + "\n")

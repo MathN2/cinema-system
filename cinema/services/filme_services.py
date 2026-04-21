@@ -119,7 +119,7 @@ def get_movieattr(filme_selecionado):
     return propriedade_selecionada
 
 def get_value(campo):
-    print(campo)
+    # print(campo)
     if campo in ['duracao', 'intervalo']:
         print("Digite no formato hh:mm (ex: 02:30)")
         return utils.to_time()

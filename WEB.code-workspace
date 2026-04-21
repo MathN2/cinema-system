@@ -1,0 +1,35 @@
+{
+	"folders": [
+		{
+			"path": "../University/WEB"
+		},
+		{
+			"path": "../University/TDA"
+		},
+		{
+			"path": "../University/Python"
+		},
+		{
+			"path": "../University/Java"
+		},
+		{
+			"path": "../WorkSpace"
+		},
+		{
+			"path": "../../eclipse-workspace/RPG"
+		},
+		{
+			"path": "../University/PythonPowerUp"
+		},
+		{
+			"path": "../Itine"
+		},
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"liveServer.settings.multiRootWorkspaceName": "Itine",
+		"java.configuration.updateBuildConfiguration": "interactive"
+	}
+}

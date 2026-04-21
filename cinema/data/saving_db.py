@@ -29,6 +29,7 @@ def save_section_db(sessao):
         ]   
         for linha, colunas in sessao.assentos.items()
     }
+    print(assentos)
 
     assentos_json = json.dumps(assentos)
     data_hora = sessao.data_hora.strftime("%Y-%m-%d %H:%M:%S")
@@ -56,6 +57,22 @@ def save_section_db(sessao):
 
     conn.close()
     return sessao_id
+
+
+def update_section_assentos(sessao):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    assentos_json = json.dumps(sessao.assentos)
+
+    cursor.execute("""
+        UPDATE sessoes
+        SET assentos = %s
+        WHERE id = %s
+    """, (assentos_json, sessao.id))
+
+    conn.commit()
+    conn.close()
 
 
 def save_room_db(sala):
