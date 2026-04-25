@@ -77,7 +77,7 @@ def _generate_schedule(config):
     return horarios
 
 
-def get_section_by_date_hour(filme):
+def get_section_by_date_hour(filme, sala_id):
     sessoes = loading_db.load_sections(filme.id)
     datas = set()
     datas_formatadas = []

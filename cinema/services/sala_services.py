@@ -1,6 +1,7 @@
 from cinema.data.loading_db import load_movies, load_sections, load_rooms
 from cinema.models.sala import Room
 from cinema.data.db import get_connection
+from datetime import datetime, timedelta, time, date
 
 
 def create_room(dados):
@@ -41,23 +42,37 @@ def delete_room(sala_id):
     return "ok"
     
 
-
-def room_in_use(sala_id):
+def room_in_use(sala_id, data_inicio_nova=None, data_fim_nova=None):
     filmes = load_movies()
 
-    if filmes is None:
+    if not filmes:
         return False
-    
+
     for filme in filmes:
         sessoes = load_sections(filme.get('id'))
 
         if not sessoes:
             continue
-        
+
         for sessao in sessoes:
-            if sessao.get('sala_id') == sala_id:
-                return True
-    
+            if sessao.get('sala_id') != sala_id:
+                continue
+
+            inicio_existente = sessao.get('data_hora')
+
+            if isinstance(inicio_existente, str):
+                inicio_existente = datetime.strptime(
+                    inicio_existente,
+                    "%Y-%m-%d %H:%M:%S"
+                )
+
+            data_existente = inicio_existente.date()
+
+            # 🔽 verifica se está dentro do intervalo
+            if data_inicio_nova and data_fim_nova:
+                if data_inicio_nova <= data_existente <= data_fim_nova:
+                    return True
+
     return False
 
 

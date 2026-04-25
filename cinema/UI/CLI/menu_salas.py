@@ -121,13 +121,13 @@ def _list_rooms():
     print('-' * 50)
 
 
-def get_room_label(sala):
-    if is_room_occupied(sala["id"]):
+def get_room_label(sala, inicial=None, fim=None):
+    if sala_services.room_in_use(sala["id"], inicial, fim):
         return "🔴 OCUPADA"
     return "🟢 DISPONÍVEL"
 
 
-def is_room_occupied(sala_id):
+def is_room_occupied(sala_id, novo_inicio=None, nova_duracao=None):
     filmes = loading_db.load_movies()
 
     if not filmes:

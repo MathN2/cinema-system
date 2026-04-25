@@ -2,10 +2,11 @@ from cinema.services import utils
 from cinema.data import saving_db, loading_db
 import cinema.UI.CLI.coletar_dados_filme as coletar_dados_filme
 import cinema.UI.CLI.menu_salas as menu_salas
-from cinema.services import filme_services, sessao_services
+from cinema.services import filme_services, sessao_services, sala_services
 from cinema.models.sala import Room
 from rich.console import Console
 from rich.table import Table
+from datetime import datetime, timedelta
 import questionary
 
 # ================================================================
@@ -44,30 +45,25 @@ def menu_filmes():
             choices=choices
         ).ask()
 
-#         mensagem = """
-# 1 - Cadastrar novo filme.
-# 2 - Exibir filmes cadastrados.
-# 3 - Remover filme.
-# 4 - Alterar configuração de filme.
-# 0 - Sair.\n"""
-#         opcao = utils.validar_int(0, 4, mensagem)
-
 
         if opcao == 1:
             dados = coletar_dados_filme.get_movie_data()
             filme = filme_services.create_movie(dados)
 
+            data_inicial, data_final = ask_dates()
+            horario_inicial, horario_final = ask_schedule()
 
-            salas = ask_room()
+            # inicio = datetime.combine(data_inicial, horario_inicial)
+            # fim = datetime.combine(data_final, horario_final)
+
+            salas = ask_room(data_inicial, data_final)
 
             if salas is None:
                 print("Uma sala deve existir para continuar.")
                 continue
             if salas == 'canc':
                 continue
-
-            data_inicial, data_final = ask_dates()
-            horario_inicial, horario_final = ask_schedule()
+            
 
             filme_id = saving_db.save_movie_db(filme)
             filme.id = filme_id
@@ -179,7 +175,7 @@ def list_movies():
 
 
 # SALA:
-def ask_room():
+def ask_room(data_inicio, data_fim):
     salas = loading_db.load_rooms()
     if not salas:
         print("Não existem salas.")
@@ -191,7 +187,7 @@ def ask_room():
         choices = []
 
         for index, sala in enumerate(salas):
-            label = menu_salas.get_room_label(sala)
+            label = menu_salas.get_room_label(sala, data_inicio, data_fim)
             choices.append(
                 questionary.Choice(
                     f'sala {sala['numero']} ({label})',
@@ -218,7 +214,7 @@ def ask_room():
 
         sala = Room.from_dict(salas[escolha_sala])
 
-        if menu_salas.is_room_occupied(sala.id):
+        if sala_services.room_in_use(sala.id, data_inicio, data_fim):
             print("Sala ocupada. Escolha outra.")
             continue
 

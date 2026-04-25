@@ -24,12 +24,10 @@ def get_movie_data():
         'titulo': ask_title(),
         'duracao': ask_duration(),
         'dias_disponiveis': ask_weekdays(),
-
     }
 
-
-
 # FILME_ID: DB vai proporcionar
+
 
 # TITULO:
 def ask_title():

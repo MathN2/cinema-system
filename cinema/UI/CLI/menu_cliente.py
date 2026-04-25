@@ -2,7 +2,7 @@ import json
 
 from cinema.UI.CLI import paginacao, menu_filmes
 from cinema.services import sessao_services
-from cinema.models import filme as fm, sessao
+from cinema.models import filme as fm, sessao as ss
 from cinema.data import loading_db, saving_db
 import questionary
 
@@ -53,9 +53,29 @@ def menu_client():
         # Divisoria
         print("\n" + "-" * 40 + "\n")
 
-        datas = sessao_services.get_section_by_date_hour(filme)
+        # Escolha sala
+        sessoes = loading_db.load_sections(filme.id)
+        salas_ids = set()
 
-        print("Escolha um dia para assistir o filme: ")
+        # 🔽 primeiro: coleta todas as salas
+        for sessao in sessoes:
+            sala_id = sessao.get('sala_id')
+            salas_ids.add(sala_id)
+
+        # 🔽 depois: decide
+        if len(salas_ids) == 1:
+            sala_escolhida = list(salas_ids)[0]
+        else:
+            print(salas_ids)
+            sala_escolhida = questionary.select(
+                "Escolha a sala:",
+                choices = [questionary.Choice(str(sala_id), value=sala_id) for sala_id in salas_ids]
+            ).ask()
+
+    
+
+        datas = sessao_services.get_section_by_date_hour(filme, sala_escolhida)
+
         data_escolhida = paginacao.pagination(datas)
 
         if data_escolhida is None:
@@ -80,7 +100,7 @@ def menu_client():
         if dados_sessao is None:
             continue
 
-        sessao_obj = sessao.Section.from_dict(dados_sessao)
+        sessao_obj = ss.Section.from_dict(dados_sessao)
 
         sessao_obj.show_seats(filme)
 

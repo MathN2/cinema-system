@@ -39,3 +39,17 @@ def load_rooms():
     conn.close()
     
     return salas
+
+# def load_room(filme_id):
+#     conn = get_connection()
+#     cursor = conn.cursor(dictionary=True)
+
+    
+#     cursor.execute("""
+                   
+#                    """,
+
+#     sala = cursor.fetchone()
+#     conn.close()
+
+#     return sala

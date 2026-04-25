@@ -29,7 +29,6 @@ def save_section_db(sessao):
         ]   
         for linha, colunas in sessao.assentos.items()
     }
-    print(assentos)
 
     assentos_json = json.dumps(assentos)
     data_hora = sessao.data_hora.strftime("%Y-%m-%d %H:%M:%S")
