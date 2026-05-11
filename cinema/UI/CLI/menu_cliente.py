@@ -66,14 +66,11 @@ def menu_client():
         if len(salas_ids) == 1:
             sala_escolhida = list(salas_ids)[0]
         else:
-            print(salas_ids)
             sala_escolhida = questionary.select(
                 "Escolha a sala:",
                 choices = [questionary.Choice(str(sala_id), value=sala_id) for sala_id in salas_ids]
             ).ask()
-
     
-
         datas = sessao_services.get_section_by_date_hour(filme, sala_escolhida)
 
         data_escolhida = paginacao.pagination(datas)
@@ -95,7 +92,7 @@ def menu_client():
 
 
         data_hora = f"{data_escolhida['data']}_{horario_escolhido['label']}"
-        dados_sessao = sessao_services.get_section(filme, data_hora)
+        dados_sessao = sessao_services.get_section(filme, data_hora, sala_escolhida)
 
         if dados_sessao is None:
             continue

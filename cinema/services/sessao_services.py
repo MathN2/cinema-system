@@ -77,8 +77,8 @@ def _generate_schedule(config):
     return horarios
 
 
-def get_section_by_date_hour(filme, sala_id):
-    sessoes = loading_db.load_sections(filme.id)
+def get_section_by_date_hour(filme, sala_id=None):
+    sessoes = loading_db.load_sections(filme.id, sala_id)
     datas = set()
     datas_formatadas = []
     horarios = set()
@@ -135,8 +135,8 @@ def get_section_by_date_hour(filme, sala_id):
 
     return datas_formatadas
 
-def get_section(filme, data_hora):
-    sessoes = loading_db.load_sections(filme.id)
+def get_section(filme, data_hora, sala_id=None):
+    sessoes = loading_db.load_sections(filme.id, sala_id)
     data_hora = datetime.strptime(data_hora, "%Y-%m-%d_%H:%M:%S")
     if sessoes:
         for sessao in sessoes:

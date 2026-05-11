@@ -13,14 +13,15 @@ def load_movies():
     return filmes
 
 
-def load_sections(filme_id):
+def load_sections(filme_id, sala_id=None):
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
-
+    
     cursor.execute("""
-                   SELECT * FROM sessoes
-                   WHERE filme_id = %s
-                   """, (filme_id,))
+                SELECT * FROM sessoes
+                WHERE filme_id = %s
+                AND (%s IS NULL OR sala_id = %s)
+                """, (filme_id, sala_id, sala_id))
 
 
     sessoes = cast(list[dict[str, object]], cursor.fetchall())

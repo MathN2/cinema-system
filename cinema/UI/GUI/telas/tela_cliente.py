@@ -1,5 +1,5 @@
 import tkinter as tk
-from cinema.data.loading_db import load_movies
+from cinema.data.loading_db import load_movies, load_sections
 from cinema.models.filme import Movie
 from cinema.models.sessao import Section
 from cinema.services import sessao_services
@@ -91,17 +91,50 @@ def tela_filmes(root):
             bg="#2196F3",
             fg="white",
             width=10,
-            command=lambda filme=filme: escolha_dia(root, filme)
+            command=lambda filme=filme: escolha_sala(root, filme)
         ).grid(row=i+1, column=1, padx=10, pady=5)
+
+
+# ================================================================
+#                       SALAS
+# ================================================================
+def escolha_sala(root, filme):
+
+    frame = tk.Frame(root, bg="#2b2b2b")
+    trocar_tela(frame)
+
+    tk.Label(
+        frame,
+        text="Escolha a sala",
+        font=("Arial", 14, "bold"),
+        fg="white",
+        bg="#2b2b2b"
+    ).pack(pady=10)
+
+    sessoes = load_sections(filme.get('id'))
+    salas_ids = set()
+
+    for sessao in sessoes:
+        sala_id = sessao.get('sala_id')
+        salas_ids.add(sala_id)
+
+    for sala_id in salas_ids:
+        tk.Button(
+            frame,
+            text=f"Sala {sala_id}",
+            width=20,
+            bg="#555",
+            fg="white",
+            command=lambda sala_id=sala_id: escolha_dia(root, filme, sala_id)
+        ).pack(pady=8)
 
 
 # ================================================================
 #                       DIAS
 # ================================================================
-def escolha_dia(root, filme):
-
+def escolha_dia(root, filme, sala_id=None):
     filme = Movie(**filme)
-    datas = sessao_services.get_section_by_date_hour(filme)
+    datas = sessao_services.get_section_by_date_hour(filme, sala_id)
 
     frame = tk.Frame(root, bg="#2b2b2b")
     trocar_tela(frame)
@@ -124,15 +157,14 @@ def escolha_dia(root, filme):
             width=18,
             bg="#555",
             fg="white",
-            command=lambda item=item: escolha_horario(root, item, filme)
+            command=lambda item=item: escolha_horario(root, item, filme, sala_id)
         ).grid(row=i//4, column=i%4, padx=8, pady=8)
 
 
 # ================================================================
 #                       HORÁRIOS
 # ================================================================
-def escolha_horario(root, item, filme):
-
+def escolha_horario(root, item, filme, sala_id=None):
     frame = tk.Frame(root, bg="#2b2b2b")
     trocar_tela(frame)
 
@@ -154,19 +186,19 @@ def escolha_horario(root, item, filme):
             width=10,
             bg="#444",
             fg="white",
-            command=lambda item=item, horario=horario: definir_sessao(item['data'], horario, filme)
+            command=lambda item=item, horario=horario: definir_sessao(item['data'], horario, filme, sala_id)
         ).grid(row=i//5, column=i%5, padx=5, pady=5)
 
 
 # ================================================================
 #                       ASSENTOS
 # ================================================================
-def definir_sessao(data, horario, filme):
+def definir_sessao(data, horario, filme, sala_id=None):
     global selecionados
     selecionados.clear()
 
     data_hora = f'{data}_{horario}'
-    dados_sessao = sessao_services.get_section(filme, data_hora)
+    dados_sessao = sessao_services.get_section(filme, data_hora, sala_id)
 
     sessao_obj = Section.from_dict(dados_sessao)
 
