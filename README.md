@@ -89,7 +89,13 @@ Este projeto começou pequeno, mas evoluiu naturalmente para um sistema mais rob
     │   │   │   menu_salas.py
     │   │   │   paginacao.py
     │   │
-    │   └───GUI
+    │   ├───GUI
+    │   │   │   main_window.py
+    │   │   │
+    │   │   └───telas
+    │   │   │   │   tela_adm.py
+    │   │   │   │   tela_cliente.py
+    │   │   │   │   tela_filmes.py
 ```
 
 ---
